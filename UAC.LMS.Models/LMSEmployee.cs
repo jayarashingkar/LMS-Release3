@@ -68,13 +68,17 @@ namespace UAC.LMS.Models
         public Byte[] RowVersion { get; set; }
         [StringLength(DataLengthConstant.LENGTH_CODE)]
         public string StatusCode { get; set; }
+
+        //Removed the comments after creating the database
+        // Do not comment after
+
         [ForeignKey("StatusCode")]
         public virtual LMSStatusCodeDetail StatusCodeDetail { get; set; }
 
         // Use the code below After first time database creation
         // Comment - During first time database creation
 
-        //[ForeignKey("StatusCode")]
+        //[ForeignKey("StatusCode")] 
         //public virtual LMSStatusCodeDetail StatusCodeDetail { get; set; }
 
         #endregion
