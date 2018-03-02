@@ -1,0 +1,70 @@
+﻿@model bool
+@{
+    ViewBag.Title = "SecuityConfig";
+}
+
+<div id="popup" style="display:none">
+    <div class="container">
+        <form id="entityform" method="post">
+            <div class="row">
+                <div class="form-group">
+                    <label for="Password" class="cols-sm-2 control-label">New Password</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                            <input type="password" value="" id="Password" name="Password" class="form-control" placeholder="Enter New Password" />
+                            <input type="hidden" name="HasQuestionId" id="HasQuestionId" value="" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label for="Password" class="cols-sm-2 control-label">Confirm Password</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                            <input type="password" value="" id="ConfirmPassword" name="ConfirmPassword" class="form-control" placeholder="Enter Confirm Password" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div name="qexists" class="row">
+                <div class="form-group">
+                    <label for="LMSSecurityQuestionId" class="cols-sm-2 control-label">Choose Security Question</label>
+                    <div class="cols-sm-10">
+                        @Html.DropDownList("LMSSecurityQuestionId", ViewBag.ddSecurityQuestions as IEnumerable<SelectListItem>, new { @class = "show-tick" })
+                    </div>
+                </div>
+            </div>
+            <div name="qexists" class="row">
+                <div class="form-group">
+                    <label for="SecurityAnswer" class="cols-sm-2 control-label">Security Answer</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                            <input type="text" value="" id="SecurityAnswer" name="SecurityAnswer" class="form-control" placeholder="Enter Security Answer" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/SecuityConfig")
+    <script>
+        $(document).ready(function () {
+            CheckSecuityConfig('@Model');
+            var qid = '@ViewBag.HasQuestionId';
+            if (qid === "True") {
+                $('div[name=qexists]').hide();
+                $('#HasQuestionId').val(true);
+            }
+            else
+                $('#HasQuestionId').val(false);
+        });
+    </script>
+}
+

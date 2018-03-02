@@ -1,0 +1,414 @@
+﻿@model UAC.LMS.Web.ViewModel.LMSEmployeeCourse_VM
+@{
+    ViewBag.Title = "Employees Courses";
+}
+<div id="searchDiv" style="display:none">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="searchCourseName" class="cols-sm-2 control-label">Course Name</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        <input type="text" value="" id="searchCourseName" name="searchCourseName" class="form-control" placeholder="Enter Course Name" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="searchCourseCode" class="cols-sm-2 control-label">Course Code</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        <input type="text" value="" id="searchCourseCode" name="searchCourseCode" class="form-control" placeholder="Enter Course Code" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="cols-sm-2 control-label"> </label>
+                <div class="cols-sm-10">
+                    @*<label class="radio-custom radio-inline" data-initialize="radio">
+                            <input class="sr-only" name="IsCouresType" type="radio" value="IsAll"> All
+                        </label>*@
+                    <label class="radio-custom radio-inline" data-initialize="radio">
+                        <input class="sr-only" name="IsCouresType" type="radio" value="IsReocurring"> Reoccurring
+                    </label>
+                    <label class="radio-custom radio-inline" data-initialize="radio">
+                        <input class="sr-only" name="IsCouresType" type="radio" value="IsInitialOrientation"> InitialOrientation
+                    </label>
+                    @* remove comments while adding JOB TITLES COURSES *@
+                    <label class="radio-custom radio-inline" data-initialize="radio">
+                        <input class="sr-only" name="IsJobTitle" type="radio" value="IsJobTitle"> Job Titles
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    @*<div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="searchLMSJobTitleId" class="cols-sm-2 control-label">Job Titles</label>
+                <div class="cols-sm-10">
+                    @Html.DropDownList("searchLMSJobTitleId", ViewBag.ddJobTitles as IEnumerable<SelectListItem>, new { @class = "show-tick" })
+                </div>
+            </div>
+        </div>
+    </div>*@
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="" class="cols-sm-2 control-label"></label>
+                <div class="cols-sm-10">
+                    <button id="btnSearch" class="btn btn-primary btn-large"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="" class="cols-sm-2 control-label"></label>
+                <div class="cols-sm-10">
+                    <button id="btnClear" class="btn btn-primary btn-large"><i class="fa fa-times" aria-hidden="true"></i> Clear</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel-heading">List of Employees Courses</div>
+<div class="panel-body">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <button id="btnAdd" class="btn btn-success btn-large"><i class="fa fa-plus" aria-hidden="true"></i> Add Courses</button>
+                <button id="btnAddOrient" class="btn btn-success btn-large"><i class="fa fa-plus" aria-hidden="true"></i> Add InitialOrientation Courses</button>
+                @* remove comments while adding JOB TITLES COURSES *@
+                <button id="btnAddCourse" class="btn btn-success btn-large"><i class="fa fa-plus" aria-hidden="true"></i> Add Job Title Courses</button>
+            </div>
+            <div class="col-md-3 col-md-offset-1">
+                <button id="btnBack" onclick="window.history.back();" class="btn btn-success btn-large"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="FullName" class="cols-sm-2 control-label">Name</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                            <input disabled="disabled" type="text" value="@Model.FullName" id="FullName" name="FullName" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="EmployeeNo" class="cols-sm-2 control-label">Employee No</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                            <input type="text" disabled="disabled" value="@Model.EmployeeNo" id="EmployeeNo" name="EmployeeNo" class="form-control" placeholder="Enter Employee No" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="LMSDepartmentId" class="cols-sm-2 control-label">Department</label>
+                    <div class="cols-sm-10">
+                        <input type="text" disabled="disabled" value="@Model.DepartmentName" id="LMSDepartmentId" name="LMSDepartmentId" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="LMSJobTitleId" class="cols-sm-2 control-label">Job Title</label>
+                    <div class="cols-sm-10">
+                        <input type="text" disabled="disabled" value="@Model.JobTitleName" id="LMSJobTitleId" name="LMSJobTitleId" class="form-control" />
+                        <input type="hidden" name="hdnJobTitleId" id="hdnJobTitleId" value="@Model.JobTitleId" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="Shift" class="cols-sm-2 control-label">Shift</label>
+                    <div class="cols-sm-10">
+                        <input type="text" disabled="disabled" value="@Model.Shift" id="LMSJobTitleId" name="LMSJobTitleId" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="HireDate" class="cols-sm-2 control-label">Hire Date</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <div class="input-group date">
+                                <input value="@Model.StrHireDate" disabled="disabled" type="text" id="HireDate" name="HireDate" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    @*// Changed  Business Unit to  Location 11/21/2016
+                        <label for="LMSBusinessUnitId" class="cols-sm-2 control-label">Business Unit</label>*@
+                    <label for="LMSBusinessUnitId" class="cols-sm-2 control-label">Location</label>
+                    <div class="cols-sm-10">
+                        <input type="text" disabled="disabled" value="@Model.BusinessUnitName" id="LMSBusinessUnitId" name="LMSBusinessUnitId" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="searchStatusCode" class="cols-sm-2 control-label">Employee Status</label>
+                    <div class="cols-sm-10">
+                        <input type="text" disabled="disabled" value="@Model.Status" id="LMSStatus" name="LMSStatus" class="form-control" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @{Html.RenderPartial("_Repeater", "employeeCoursesRepeater");}
+</div>
+<div id="popup" style="display:none">
+    <div class="container">
+        <form id="entityform" method="post">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="LMSCourseId" class="cols-sm-2 control-label">Course Name</label>
+                        <div class="cols-sm-10">
+                            @Html.DropDownList("LMSCourseId", ViewBag.ddCourses as IEnumerable<SelectListItem>, new { @class = "show-tick" })
+                            <input type="hidden" name="txtId" id="txtId" value="" />
+                            <input type="hidden" name="LMSEmployeeId" id="LMSEmployeeId" value="@Model.LMSEmployeeId" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="CourseCode" class="cols-sm-2 control-label">Course Code</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input disabled="disabled" type="text" value="" id="CourseCode" name="CourseCode" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @* Changed CourseLength to  Training Time 11/21/2016*@
+                        @*<label for="CourseLength" class="cols-sm-2 control-label">Course Length</label>*@
+                        <label for="CourseLength" class="cols-sm-2 control-label"> Training Time</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input disabled="disabled" type="text" value="" id="CourseLength" name="CourseLength" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="IsInitialOrientation" class="cols-sm-2 control-label">Initial Orientation</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input disabled="disabled" type="text" value="" id="IsInitialOrientation" name="IsInitialOrientation" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="IsReoccuring" class="cols-sm-2 control-label">Is Reoccurring</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input disabled="disabled" type="text" value="" id="IsReoccuring" name="IsReoccuring" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="Frequency" class="cols-sm-2 control-label">Frequency (in months)</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input disabled="disabled" type="text" value="" id="Frequency" name="Frequency" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="InstructorName" class="cols-sm-2 control-label">Instructor Name</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input type="text" value="" id="InstructorName" name="InstructorName" class="form-control" placeholder="Enter Instructor Name" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*// Removed Previous Date 11/21/2016
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="PreviousDate" class="cols-sm-2 control-label">Previous Date</label>
+                            <div class="cols-sm-10">
+                                <div class="input-group">
+                                    <div class="input-group date">
+                                        <input type="text" id="PreviousDate" name="PreviousDate" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="CompletedDate" class="cols-sm-2 control-label">Completed Date</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <div class="input-group date">
+                                    <input type="text" id="CompletedDate" name="CompletedDate" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="DueDate" class="cols-sm-2 control-label">Due Date</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <div class="input-group date">
+                                    <input type="text" id="DueDate" name="DueDate" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="Remarks" class="cols-sm-2 control-label">Remarks</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input type="text" value="" id="Remarks" name="Remarks" class="form-control" placeholder="Enter Remarks" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="Evaluation" class="cols-sm-2 control-label">Evaluation</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input type="text" value="" id="Evaluation" name="Evaluation" class="form-control" placeholder="Enter Evaluation" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="orientpopup" style="display:none">
+    <div class="container">
+        <form id="orientform" method="post">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="OrientInstructorName" class="cols-sm-2 control-label">Instructor Name</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input type="text" value="" id="OrientInstructorName" name="OrientInstructorName" class="form-control" placeholder="Enter Instructor Name" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="OrientRemarks" class="cols-sm-2 control-label">Remarks</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input type="text" value="" id="OrientRemarks" name="OrientRemarks" class="form-control" placeholder="Enter Remarks" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="OrientEvaluation" class="cols-sm-2 control-label">Evaluation</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input type="text" value="" id="OrientEvaluation" name="OrientEvaluation" class="form-control" placeholder="Enter Evaluation" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="orientCompletedDate" class="cols-sm-2 control-label">Completed Date</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <div class="input-group date">
+                                    <input type="text" id="orientCompletedDate" name="orientCompletedDate" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section scripts{
+    @Scripts.Render("~/bundles/EmployeeCourseList")
+    <script>
+        $(document).ready(function () {
+            LoadGrid("employeeCoursesRepeater");
+            $('#searchStatusCode').selectpicker();
+            if (document.getElementById("hdnPermission").value == "ReadOnly") {
+                $('#btnAdd').addClass('disabled');
+                $('#btnAddOrient').addClass('disabled');
+            }
+        });
+    </script>
+}

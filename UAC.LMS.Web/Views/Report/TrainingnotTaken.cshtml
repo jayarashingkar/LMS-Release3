@@ -1,0 +1,24 @@
+﻿@{
+    ViewBag.Title = "Training not Taken Report";
+}
+<div class="panel-heading">Training Not Taken</div>
+
+<div class="panel-body">
+
+    @using (Html.BeginForm("TrainingnotTaken", "Report", FormMethod.Post, new { id = "reportForm", name = "reportForm" }))
+    {
+        <div class="">
+            <button id="btnExport" class="btn btn-success btn-large"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export</button>
+        </div>
+        { Html.RenderPartial("_Repeater", "trainingnotTakenReportRepeater"); }
+    }
+</div>
+@section scripts{
+    @Scripts.Render("~/bundles/TrainingnotTakenReport")
+    <script>
+        $(document).ready(function () {
+            LoadGrid("trainingnotTakenReportRepeater");
+            $('#headerDiv').hide();
+        });
+    </script>
+}

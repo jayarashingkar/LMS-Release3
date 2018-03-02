@@ -1,0 +1,58 @@
+﻿
+@{
+    ViewBag.Title = "Departments";
+}
+
+<div class="panel-heading">List of Departments</div>
+
+<div class="panel-body">
+    <div class="">
+        <button id="btnAdd" class="btn btn-success btn-large"><i class="fa fa-plus" aria-hidden="true"></i> Add Departments</button>
+    </div>
+    @{Html.RenderPartial("_Repeater", "departmentRepeater");}
+</div>
+<div id="popup" style="display:none">
+    <div class="container">
+        <form id="entityform" method="post">
+            <div class="row">
+                <div class="form-group">
+                    <label for="DepartmentName" class="cols-sm-2 control-label">Department Name</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                            <input type="text" value="" id="DepartmentName" name="DepartmentName" class="form-control" placeholder="Enter Department Name" />
+                            <input type="hidden" name="txtId" id="txtId" value="" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label for="DepartmentCode" class="cols-sm-2 control-label">Department Code</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                            <input type="text" value="" id="DepartmentCode" name="DepartmentCode" class="form-control" placeholder="Enter Department Code" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*<div class="row">
+                    <div class="form-group">
+                        <label for="LMSBusinessUnitId" class="cols-sm-2 control-label">Business Unit</label>
+                        <div class="cols-sm-10">
+                            @Html.DropDownList("LMSBusinessUnitId", ViewBag.ddBusinessUnits as IEnumerable<SelectListItem>, new { @class = "show-tick" })
+                        </div>
+                    </div>
+                </div>*@
+        </form>
+    </div>
+</div>
+@section scripts{
+    @Scripts.Render("~/bundles/Departments")
+    <script>
+        $(document).ready(function () {
+            LoadGrid("departmentRepeater");
+        });
+    </script>
+}

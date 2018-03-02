@@ -1,0 +1,86 @@
+﻿
+@{
+    ViewBag.Title = "Audit";
+}
+@*added here*@
+
+<div id="searchDiv" style="display:none">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="searchUserName" class="cols-sm-2 control-label">User Name</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        <input type="text" value="" id="searchUserName" name="searchUserName" class="form-control" placeholder="Enter User Name" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="searchFullName" class="cols-sm-2 control-label">Full Name</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        <input type="text" value="" id="searchFullName" name="searchFullName" class="form-control" placeholder="Enter Name" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="searchDate" class="cols-sm-2 control-label">Transaction Date</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <input type="text" id="searchDate" name="searchDate" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="searchDesc" class="cols-sm-2 control-label">Description</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        <input type="text" value="" id="searchDesc" name="searchDesc" class="form-control" placeholder="Enter Description" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="" class="cols-sm-2 control-label"></label>
+                <div class="cols-sm-10">
+                    <button id="btnSearch" class="btn btn-primary btn-large"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="" class="cols-sm-2 control-label"></label>
+                <div class="cols-sm-10">
+                    <button id="btnClear" class="btn btn-primary btn-large"><i class="fa fa-times" aria-hidden="true"></i> Clear</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="panel-heading">List of Audit Transactions</div>
+<div class="panel-body">
+    @{Html.RenderPartial("_Repeater", "AuditRepeater");}
+</div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/Audit")
+    <script>
+        $(document).ready(function () {
+            LoadGrid("AuditRepeater");
+        });
+    </script>
+}

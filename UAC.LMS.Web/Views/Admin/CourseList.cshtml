@@ -1,0 +1,170 @@
+﻿
+@{
+    ViewBag.Title = "Courses";
+}
+<div id="searchDiv" style="display:none">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="searchCourseName" class="cols-sm-2 control-label">Course Name</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        <input type="text" value="" id="searchCourseName" name="searchCourseName" class="form-control" placeholder="Enter Course Name" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="searchCourseCode" class="cols-sm-2 control-label">Course Code</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        <input type="text" value="" id="searchCourseCode" name="searchCourseCode" class="form-control" placeholder="Enter Course Code" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="cols-sm-2 control-label"> </label>
+                <div class="cols-sm-10">
+                    <label class="radio-custom radio-inline" data-initialize="radio">
+                        <input class="sr-only" name="IsCouresType" type="radio" value="IsAll"> All
+                    </label>
+                    <label class="radio-custom radio-inline" data-initialize="radio">
+                        <input class="sr-only" name="IsCouresType" type="radio" value="IsReocurring"> Reoccurring
+                    </label>
+                    @*<label class="radio-custom radio-inline" data-initialize="radio">
+                        <input class="sr-only" name="IsCouresType" type="radio" value="IsInitialOrientation"> InitialOrientation
+                        </label>*@
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="" class="cols-sm-2 control-label"></label>
+                <div class="cols-sm-10">
+                    <button id="btnSearch" class="btn btn-primary btn-large"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="" class="cols-sm-2 control-label"></label>
+                <div class="cols-sm-10">
+                    <button id="btnClear" class="btn btn-primary btn-large"><i class="fa fa-times" aria-hidden="true"></i> Clear</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel-heading">List of Courses</div>
+
+<div class="panel-body">
+    <div class="">
+        <button id="btnAdd" class="btn btn-success btn-large"><i class="fa fa-plus" aria-hidden="true"></i> Add Courses</button>
+    </div>
+    @{Html.RenderPartial("_Repeater", "courseRepeater");}
+</div>
+<div id="popup" style="display:none">
+    <div class="container">
+        <form id="entityform" method="post">
+            <div class="row">
+                <div class="form-group">
+                    <label for="CourseName" class="cols-sm-2 control-label">Course Name</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                            <input type="text" value="" id="CourseName" name="CourseName" class="form-control" placeholder="Enter Course Name" />
+                            <input type="hidden" name="txtId" id="txtId" value="" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label for="CourseCode" class="cols-sm-2 control-label">Course Code</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                            <input type="text" value="" id="CourseCode" name="CourseCode" class="form-control" placeholder="Enter Course Code" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    @* Changed CourseLength to  Training Time 11/21/2016*@
+                   @* <label for="CourseLength" class="cols-sm-2 control-label">Course Length</label>*@
+                    <label for="CourseLength" class="cols-sm-2 control-label">Training Time</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                            @* Changed CourseLength to  Training Time 11/21/2016*@
+                            @*<input type="text" value="" id="CourseLength" name="CourseLength" class="form-control" placeholder="Enter Course Length" />*@
+                            <input type="text" value="" id="CourseLength" name="CourseLength" class="form-control" placeholder="Enter Training Time " />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label class="cols-sm-2 control-label">Reoccurring</label>
+                    <div class="cols-sm-10">
+                        <label class="radio-custom radio-inline" data-initialize="radio">
+                            <input class="sr-only" name="IsReocurring" type="radio" value="yes"> Yes
+                        </label>
+                        <label class="radio-custom radio-inline" data-initialize="radio">
+                            <input class="sr-only" name="IsReocurring" type="radio" value="no"> No
+                        </label>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label for="Frequency" class="cols-sm-2 control-label">Frequency (in months)</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                            <input type="text" value="" id="Frequency" name="Frequency" class="form-control" placeholder="Enter Frequency (in months)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label class="cols-sm-2 control-label">Initial Orientation</label>
+                    <div class="cols-sm-10">
+                        <label class="checkbox-custom checkbox-inline" data-initialize="checkbox">
+                            <input class="sr-only" id="IsInitialOrientation" name="IsInitialOrientation" type="checkbox" value="yes"> <span class="checkbox-label">Is Initial Orientation</span>
+                        </label>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label for="LMSJobTitleId" class="cols-sm-2 control-label">Job Titles</label>
+                    <div class="cols-sm-10">
+                        @Html.DropDownList("LMSJobTitleId", ViewBag.ddJobTitles as IEnumerable<SelectListItem>, new { @class = "show-tick" })
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@section scripts{
+    @Scripts.Render("~/bundles/Courses")
+    <script>
+        $(document).ready(function () {
+            LoadGrid("courseRepeater");
+        });
+    </script>
+}

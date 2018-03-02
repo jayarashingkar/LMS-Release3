@@ -1,0 +1,189 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Management System</title>
+    @Styles.Render("~/Content/css")
+    @*<link href="http://www.fuelcdn.com/fuelux-mctheme/1.15.4/css/fuelux-mctheme.min.css" rel="stylesheet" type="text/css" />*@
+</head>
+<body class="fuelux">
+    <input type="hidden" name="hdnPermission" id="hdnPermission" value="@GetUserPermission()" />
+    <nav class="navbar navbar-default no-margin">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header fixed-brand">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" id="menu-toggle">
+                <span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>
+            </button>
+            <a class="navbar-brand" href="#"> <img src="~/Images/uaclogo.jpg" style="height:50px;width: 220px;" /></a>
+        </div><!-- navbar-header-->
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><button class="navbar-toggle collapse in" data-toggle="collapse" id="menu-toggle-2"> <span class="glyphicon glyphicon-th-large" aria-hidden="true"></span></button></li>
+                <li>
+                    <div style="padding:5px" class="col-md-offset-5">
+                        <fieldset>
+                            <img src="~/Images/LMS_Title with Color Line.PNG" style="height: auto;width: 350px;" />
+                           @* <hr class="colorgraph">*@
+                        </fieldset>
+                    </div>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-top-links navbar-right">
+                <li>
+                    <a href="~/LogOut/Index"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);">
+                        <span class="glyphicon glyphicon-user"></span>
+                        <strong>@GetUserName()</strong>
+                    </a>
+                </li>
+            </ul>
+        </div><!-- bs-example-navbar-collapse-1 -->
+
+    </nav>
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav nav-pills nav-stacked" id="menu">
+
+                <li class="active">
+                    <a href="#"><span class="fa-stack fa-lg pull-left"><i class="fa fa-dashboard fa-stack-1x "></i></span> Dashboard</a>
+                </li>
+                <li>
+                    <a href="#"><span class="fa-stack fa-lg pull-left"><i class="fa fa-users fa-stack-1x " style="color:aqua"></i></span> Employees</a>
+                    <ul class="nav-pills nav-stacked" style="list-style-type:none">
+                        <li><a href="~/Employee/EmployeeList"><span class="fa-stack fa-lg pull-left"><i class="fa fa-share-square-o fa-stack-1x " style="color:aqua"></i></span>Employee Records</a></li>
+                        @*<li><a href="~/Employee/EmployeeCourseList"><span class="fa-stack fa-lg pull-left"><i class="fa fa-book fa-stack-1x "></i></span>Employee Courses</a></li>*@
+                    </ul>
+                </li>
+                <li id="liadmin">
+
+                    <a href="#"><span class="fa-stack fa-lg pull-left"><i class="fa fa-lock fa-stack-1x " style="color:coral"></i></span>Admin</a>
+                    <ul class="nav-pills nav-stacked" style="list-style-type:none;">
+                        @*// Changed  Business Unit to  Location 11/21/2016
+                        <li><a href="~/admin/BusinessUnitList"><span class="fa-stack fa-lg pull-left"><i class="fa fa-briefcase fa-stack-1x " style="color:coral"></i></span>Business Units</a></li>*@
+                        <li><a href="~/admin/BusinessUnitList"><span class="fa-stack fa-lg pull-left"><i class="fa fa-briefcase fa-stack-1x " style="color:coral"></i></span>Location</a></li>
+                        <li><a href="~/admin/CourseList"><span class="fa-stack fa-lg pull-left"><i class="fa fa-book fa-stack-1x " style="color:coral"></i></span>Courses</a></li>
+                        <li><a href="~/admin/DepartmentList"><span class="fa-stack fa-lg pull-left"><i class="fa fa-sitemap fa-stack-1x " style="color:coral"></i></span>Departments</a></li>
+                        <li><a href="~/admin/JobTitleList"><span class="fa-stack fa-lg pull-left"><i class="fa fa-flag fa-stack-1x " style="color:coral"></i></span>Job Titles</a></li>
+                        <li><a href="~/Admin/UserLoginList"><span class="fa-stack fa-lg pull-left"><i class="fa fa-check-square fa-stack-1x " style="color:coral"></i></span>Login Permissions</a></li>
+                        
+                        @*<li><a href="~/Report/TrainingOverDues"><span class="fa-stack fa-lg pull-left"><i class="fa fa-file-excel-o fa-stack-1x " style="color:coral"></i></span>Training OverDues</a></li>
+                        <li><a href="~/Report/TrainingnotTaken"><span class="fa-stack fa-lg pull-left"><i class="fa fa-file-excel-o fa-stack-1x " style="color:coral"></i></span>Training Not Taken</a></li>*@
+                        <li><a href="~/Report/TrainingOverDues1"><span class="fa-stack fa-lg pull-left"><i class="fa fa-file-excel-o fa-stack-1x " style="color:coral"></i></span>Training OverDues</a></li>
+                        <li><a href="~/Report/TrainingnotTaken1"><span class="fa-stack fa-lg pull-left"><i class="fa fa-file-excel-o fa-stack-1x " style="color:coral"></i></span>Training Not Taken</a></li>
+
+
+                        ExportToExcel
+                         @*<li><a href="#"><span class="fa-stack fa-lg pull-left"><i class="fa fa-flag fa-stack-1x "></i></span>Employee Status</a></li>*@
+                    </ul>
+                </li>
+
+              
+                <li>
+                    <a href="~/Admin/PrintRoster"> <span class="fa-stack fa-lg pull-left"><i class="fa fa-print fa-stack-1x " style="color:chartreuse"></i></span>Print Roster</a>
+                </li>
+              
+                @* Added super admin 11/21/2016*@
+
+                <input type="hidden" name="hdnPermission" id="hdnPermission" value="@GetUserPermission()" />
+                <li id="lisuperadmin">
+                    <a href="~/Admin/Audit"><span class="fa-stack fa-lg pull-left"><i class="fa fa-puzzle-piece fa-stack-1x " style="color:khaki"></i></span>Audit Table</a>
+                </li>
+            </ul>
+        </div><!-- /#sidebar-wrapper -->
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="panel panel-primary">
+                @RenderBody()
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/Utilities")
+    @Scripts.Render("~/bundles/GridUtil")
+    @RenderSection("scripts", required: false)
+
+</body>
+</html>
+
+@functions {
+    public static string GetUserPermission()
+    {
+        string userPermission = UAC.LMS.Common.Constants.PermissionConstants.ReadOnly;
+        if (HttpContext.Current.Session["CurrentUser"] != null)
+        {
+            CurrentUser loggedInUser = (CurrentUser)HttpContext.Current.Session["CurrentUser"];
+            if (loggedInUser != null && !string.IsNullOrEmpty(loggedInUser.PermissionLevel))
+            {
+                userPermission = loggedInUser.PermissionLevel;
+            }
+        }
+        return userPermission;
+    }
+    public static string GetUserName()
+    {
+        string userName = "";
+        if (HttpContext.Current.Session["CurrentUser"] != null)
+        {
+            CurrentUser loggedInUser = (CurrentUser)HttpContext.Current.Session["CurrentUser"];
+            if (loggedInUser != null)
+            {
+                userName = loggedInUser.FullName;
+            }
+        }
+        return userName;
+    }
+}
+
+<script>
+
+    $("#menu-toggle").click(function (e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+    $("#menu-toggle-2").click(function (e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled-2");
+        $('#menu ul').hide();
+    });
+    function initMenu() {
+        $('#menu ul').hide();
+        $('#menu ul').children('.current').parent().show();
+        //$('#menu ul:first').show();
+        $('#menu li a').click(
+          function () {
+              var checkElement = $(this).next();
+              if ((checkElement.is('ul')) && (checkElement.is(':visible'))) {
+                  return false;
+              }
+              if ((checkElement.is('ul')) && (!checkElement.is(':visible'))) {
+                  $('#menu ul:visible').slideUp('normal');
+                  checkElement.slideDown('normal');
+                  return false;
+              }
+          }
+          );
+    }
+    $(document).ready(function () {
+        initMenu();
+        if (document.getElementById("hdnPermission").value == "ReadOnly") {
+            $('#liadmin').addClass('disabled');
+        }
+    });
+ //Added super admin 11/21/2016
+    $(document).ready(function () {
+        initMenu();
+
+        if (document.getElementById("hdnPermission").value != "SuperAdmin") {
+            $('#lisuperadmin').addClass('disabled');
+                   
+        }
+    });
+</script>

@@ -1,0 +1,272 @@
+﻿
+@{
+    ViewBag.Title = "Employees";
+}
+<div id="searchDiv" style="display:none">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="searchFirstName" class="cols-sm-2 control-label">First Name</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        <input type="text" value="" id="searchFirstName" name="searchFirstName" class="form-control" placeholder="Enter First Name" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="searchLastName" class="cols-sm-2 control-label">Last Name</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        <input type="text" value="" id="searchLastName" name="searchLastName" class="form-control" placeholder="Enter Last Name" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="searchEmployeeNo" class="cols-sm-2 control-label">Employee No</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        <input type="text" value="" id="searchEmployeeNo" name="searchEmployeeNo" class="form-control" placeholder="Enter Employee No" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="searchStatusCode" class="cols-sm-2 control-label">Employee Status</label>
+                <div class="cols-sm-10">
+                    @Html.DropDownList("searchStatusCode", ViewBag.ddStatus as IEnumerable<SelectListItem>, new { @class = "show-tick" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="searchLMSBusinessUnitId" class="cols-sm-2 control-label">Location</label>
+                <div class="cols-sm-10">
+                    @Html.DropDownList("searchLMSBusinessUnitId", ViewBag.ddBusinessUnits as IEnumerable<SelectListItem>, new { @class = "show-tick" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="" class="cols-sm-2 control-label"></label>
+                <div class="cols-sm-10">
+                    <button id="btnSearch" class="btn btn-primary btn-large"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                    &nbsp;&nbsp;&nbsp;
+                    <button id="btnClear" class="btn btn-primary btn-large"><i class="fa fa-times" aria-hidden="true"></i> Clear</button>
+                </div>
+                
+            </div>
+            
+        </div>
+        
+    </div>
+</div>
+<div class="panel-heading">List of Employees</div>
+<div class="panel-body">
+    <div class="">
+        <button id="btnAdd" class="btn btn-success btn-large"><i class="fa fa-plus" aria-hidden="true"></i> Add Employees</button>
+    </div>
+    @{Html.RenderPartial("_Repeater", "employeeRepeater");}
+</div>
+<div id="popup" style="display:none">
+    <div class="container">
+        <form id="entityform" method="post">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="FirstName" class="cols-sm-2 control-label">First Name</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input type="text" value="" id="FirstName" name="FirstName" class="form-control" placeholder="Enter First Name" />
+                                <input type="hidden" name="txtId" id="txtId" value="" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="LastName" class="cols-sm-2 control-label">Last Name</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input type="text" value="" id="LastName" name="LastName" class="form-control" placeholder="Enter Last Name" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="MiddleName" class="cols-sm-2 control-label">Middle Name</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input type="text" value="" id="MiddleName" name="MiddleName" class="form-control" placeholder="Enter Middle Name" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="EmployeeNo" class="cols-sm-2 control-label">Employee No</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input type="text" value="" id="EmployeeNo" name="EmployeeNo" class="form-control" placeholder="Enter Employee No" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="LMSDepartmentId" class="cols-sm-2 control-label">Department</label>
+                        <div class="cols-sm-10">
+                            @Html.DropDownList("LMSDepartmentId", ViewBag.ddDepartments as IEnumerable<SelectListItem>, new { @class = "show-tick" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="LMSJobTitleId" class="cols-sm-2 control-label">Job Title</label>
+                        <div class="cols-sm-10">
+                            @Html.DropDownList("LMSJobTitleId", ViewBag.ddJobTitles as IEnumerable<SelectListItem>, new { @class = "show-tick" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="StatusCode" class="cols-sm-2 control-label">Employee Status</label>
+                        <div class="cols-sm-10">
+                            @Html.DropDownList("StatusCode", ViewBag.ddStatus as IEnumerable<SelectListItem>, new { @class = "show-tick" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="Shift" class="cols-sm-2 control-label">Shift</label>
+                        <div class="cols-sm-10">
+                            @Html.DropDownList("Shift", ViewBag.ddShifts as IEnumerable<SelectListItem>, new { @class = "show-tick" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="HireDate" class="cols-sm-2 control-label">Hire Date</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <div class="input-group date">
+                                    <input type="text" id="HireDate" name="HireDate" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @*// Changed  Business Unit to  Location 11/21/2016
+                        <label for="LMSBusinessUnitId" class="cols-sm-2 control-label">Business Unit</label>*@
+                        <label for="LMSBusinessUnitId" class="cols-sm-2 control-label">Location</label>
+                        <div class="cols-sm-10">
+                            @Html.DropDownList("LMSBusinessUnitId", ViewBag.ddBusinessUnits as IEnumerable<SelectListItem>, new { @class = "show-tick" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div id="orientpopup" style="display:none">
+    <div class="container">
+        <form id="orientform" method="post">
+            <input type="hidden" name="OrientLMSEmployeeId" id="OrientLMSEmployeeId" value="" />
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="OrientInstructorName" class="cols-sm-2 control-label">Instructor Name</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input type="text" value="" id="OrientInstructorName" name="OrientInstructorName" class="form-control" placeholder="Enter Instructor Name" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="OrientRemarks" class="cols-sm-2 control-label">Remarks</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input type="text" value="" id="OrientRemarks" name="OrientRemarks" class="form-control" placeholder="Enter Remarks" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="OrientEvaluation" class="cols-sm-2 control-label">Evaluation</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input type="text" value="" id="OrientEvaluation" name="OrientEvaluation" class="form-control" placeholder="Enter Evaluation" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="orientCompletedDate" class="cols-sm-2 control-label">Completed Date</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <div class="input-group date">
+                                    <input type="text" id="orientCompletedDate" name="orientCompletedDate" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/Employees")
+    <script>
+        $(document).ready(function () {
+            LoadGrid("employeeRepeater");
+            $('#searchStatusCode').selectpicker();
+            if (document.getElementById("hdnPermission").value == "ReadOnly") {
+                $('#btnAdd').addClass('disabled');
+            }
+        });
+    </script>
+}

@@ -1,0 +1,206 @@
+﻿
+@{
+    ViewBag.Title = "User Logins";
+}
+<div id="searchDiv" style="display:none">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="searchUserName" class="cols-sm-2 control-label">User Name</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        <input type="text" value="" id="searchUserName" name="searchUserName" class="form-control" placeholder="Enter User Name" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="searchFirstName" class="cols-sm-2 control-label">First Name</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        <input type="text" value="" id="searchFirstName" name="searchFirstName" class="form-control" placeholder="Enter First Name" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="searchLastName" class="cols-sm-2 control-label">Last Name</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        <input type="text" value="" id="searchLastName" name="searchLastName" class="form-control" placeholder="Enter Last Name" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        
+        @*<div class="col-md-4">
+            <div class="form-group">
+                <label for="searchEmployeeNo" class="cols-sm-2 control-label">Employee No</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        <input type="text" value="" id="searchEmployeeNo" name="searchEmployeeNo" class="form-control" placeholder="Enter Employee No" />
+                    </div>
+                </div>
+            </div>
+        </div>*@
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="" class="cols-sm-2 control-label"></label>
+                <div class="cols-sm-10">
+                    <button id="btnSearch" class="btn btn-primary btn-large"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="" class="cols-sm-2 control-label"></label>
+                <div class="cols-sm-10">
+                    <button id="btnClear" class="btn btn-primary btn-large"><i class="fa fa-times" aria-hidden="true"></i> Clear</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel-heading">List of User Logins</div>
+<div class="panel-body">
+    <div class="">
+        <button id="btnAdd" class="btn btn-success btn-large"><i class="fa fa-plus" aria-hidden="true"></i> Add Logins</button>
+    </div>
+    @{Html.RenderPartial("_Repeater", "userLoginsRepeater");}
+</div>
+<div id="popup" style="display:none">
+    <div class="container">
+        <form id="entityform" method="post">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="FirstName" class="cols-sm-2 control-label">First Name</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input type="text" value="" id="FirstName" name="FirstName" class="form-control" placeholder="Enter First Name" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="LastName" class="cols-sm-2 control-label">Last Name</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input type="text" value="" id="LastName" name="LastName" class="form-control" placeholder="Enter Last Name" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="UserName" class="cols-sm-2 control-label">User Name</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input type="text" value="" id="UserName" name="UserName" class="form-control" placeholder="Enter User Name" />
+                                <input type="hidden" name="txtId" id="txtId" value="" />
+                                <input type="hidden" name="UserType" id="UserType" value="Admin" />                              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="Password" class="cols-sm-2 control-label">Password</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input type="password" value="" id="Password" name="Password" class="form-control" placeholder="Enter Password" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="IssueDate" class="cols-sm-2 control-label">Issue Date</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <div class="input-group date">
+                                    <input type="text" id="IssueDate" name="IssueDate" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*<div class="col-md-4">
+                        <div class="form-group">
+                            <label for="EmployeeNo" class="cols-sm-2 control-label">Employee No</label>
+                            <div class="cols-sm-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                    <input type="text" value="" id="EmployeeNo" name="EmployeeNo" class="form-control" placeholder="Enter Employee No" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+                
+                @* commented the email 11/14/2016 and chnged the permission in same row *@
+                @*<div class="col-md-4">
+                    <div class="form-group">
+                        <label for="Email" class="cols-sm-2 control-label">Email</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-envelope" aria-hidden="true"></i></span>
+                                <input type="email" value="" id="Email" name="Email" class="form-control" placeholder="Enter Email" />
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="PermissionLevel" class="cols-sm-2 control-label">Permission Level</label>
+                        <div class="cols-sm-10">
+                            @Html.DropDownList("PermissionLevel", ViewBag.ddPermissionLevel as IEnumerable<SelectListItem>, new { @class = "show-tick" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+         @* commented permission level from next row 11/14/2016*@
+            @*<div class="row">
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="PermissionLevel" class="cols-sm-2 control-label">Permission Level</label>
+                        <div class="cols-sm-10">
+                            @Html.DropDownList("PermissionLevel", ViewBag.ddPermissionLevel as IEnumerable<SelectListItem>, new { @class = "show-tick" })
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+        </form>
+    </div>
+</div>
+
+
+@section scripts{
+    @Scripts.Render("~/bundles/UserLogins")
+    <script>
+        $(document).ready(function () {
+            LoadGrid("userLoginsRepeater");
+        });
+    </script>
+}

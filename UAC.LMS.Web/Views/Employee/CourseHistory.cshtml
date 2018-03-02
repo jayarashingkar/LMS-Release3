@@ -1,0 +1,88 @@
+﻿@model int
+@{
+    ViewBag.Title = "Training History";
+}
+<div class="pull-right">
+    <button id="btnBack" onclick="window.history.back();" class="btn btn-success btn-large">
+        <i class="fa fa-arrow-left" aria-hidden="true"></i> Back
+    </button>
+</div>
+<div id="searchDiv" style="display:none">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="LMSCourseName" class="cols-sm-2 control-label">Course Name</label>
+                <div class="cols-sm-10">
+                    @Html.DropDownList("LMSCourseName", ViewBag.ddCoursenames as IEnumerable<SelectListItem>, new { @class = "show-tick" })
+                    <input type="hidden" name="hdnEmployeeId" id="hdnEmployeeId" value="@Model" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="LMSCourseCode" class="cols-sm-2 control-label">Course Code</label>
+                <div class="cols-sm-10">
+                    @Html.DropDownList("LMSCourseCode", ViewBag.ddCoursecodes as IEnumerable<SelectListItem>, new { @class = "show-tick" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="searchFromDate" class="cols-sm-2 control-label">From Date</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <input type="text" id="searchFromDate" name="searchFromDate" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="searchToDate" class="cols-sm-2 control-label">To Date</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <input type="text" id="searchToDate" name="searchToDate" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="" class="cols-sm-2 control-label"></label>
+                <div class="cols-sm-10">
+                    <button id="btnSearch" class="btn btn-primary btn-large"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="" class="cols-sm-2 control-label"></label>
+                <div class="cols-sm-10">
+                    <button id="btnClear" class="btn btn-primary btn-large"><i class="fa fa-times" aria-hidden="true"></i> Clear</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="panel-heading">
+    <div>Employee Training History</div>
+</div>
+
+<div class="panel-body">
+    @{Html.RenderPartial("_Repeater", "HistoryRepeater");}
+</div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/CourseHistory")
+    <script>
+        $(document).ready(function () {
+            LoadGrid("HistoryRepeater");
+        });
+    </script>
+}

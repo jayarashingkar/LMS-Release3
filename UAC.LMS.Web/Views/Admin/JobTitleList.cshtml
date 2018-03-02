@@ -1,0 +1,38 @@
+﻿
+@{
+    ViewBag.Title = "Job Titles";
+}
+<div class="panel-heading">List of Job Titles</div>
+
+<div class="panel-body">
+    <div class="">
+        <button id="btnAdd" class="btn btn-success btn-large"><i class="fa fa-plus" aria-hidden="true"></i> Add Job Titles</button>
+    </div>
+    @{Html.RenderPartial("_Repeater", "jobTitleRepeater");}
+</div>
+<div id="popup" style="display:none">
+    <div class="container">
+        <form id="entityform" method="post">
+            <div class="row">
+                <div class="form-group">
+                    <label for="txtJobTitle" class="cols-sm-2 control-label">Title Name</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                            <input type="text" value="" id="txtJobTitle" name="txtJobTitle" class="form-control" placeholder="Enter Job Title Name" />
+                            <input type="hidden" name="txtId" id="txtId" value="" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@section scripts{
+    @Scripts.Render("~/bundles/JobTitles")
+    <script>
+        $(document).ready(function () {
+            LoadGrid("jobTitleRepeater");
+        });
+    </script>
+}

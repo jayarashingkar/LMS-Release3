@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+<div class="panel-heading">Test Page</div>
+
+<div class="panel-body">
+    @{Html.RenderPartial("_Repeater", "myRepeater");}
+</div>
+@section scripts{
+    <script src="~/Scripts/Test.js"></script>
+    <script>
+        $(document).ready(function () {
+            LoadGrid("myRepeater");
+        });
+    </script>
+}

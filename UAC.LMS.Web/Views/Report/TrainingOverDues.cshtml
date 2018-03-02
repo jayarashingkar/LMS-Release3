@@ -1,0 +1,25 @@
+﻿@{
+    ViewBag.Title = "Overdues Report";
+}
+<div class="panel-heading">Training OverDues</div>
+
+<div class="panel-body">
+    @using (Html.BeginForm("TrainingOverDues", "Report", FormMethod.Post, new { id = "reportForm", name = "reportForm" }))
+    {
+        <div class="">
+            <div class="">
+                <button id="btnExport" class="btn btn-success btn-large"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export</button>
+            </div>
+        </div>
+        { Html.RenderPartial("_Repeater", "overduesReportRepeater"); }
+    }
+</div>
+@section scripts{
+    @Scripts.Render("~/bundles/OverduesReport")
+    <script>
+        $(document).ready(function () {
+            LoadGrid("overduesReportRepeater");
+            $('#headerDiv').hide();
+        });
+    </script>
+}

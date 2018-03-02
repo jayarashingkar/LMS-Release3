@@ -1,0 +1,22 @@
+﻿@{
+    Layout = null;
+}
+<div class="row" id="questiondiv">
+    <div class="form-group">
+        <label for="LMSSecurityQuestionId" class="cols-sm-2 control-label">Choose Security Question</label>
+        <div class="cols-sm-12">
+            @Html.DropDownList("LMSSecurityQuestionId", ViewBag.ddSecurityQuestions as IEnumerable<SelectListItem>, new { @class = "show-tick" })
+        </div>
+    </div>
+</div>
+<div class="row" id="answerdiv">
+    <div class="form-group">
+        <label for="SecurityAnswer" class="cols-sm-2 control-label">Security Answer</label>
+        <div class="cols-sm-10">
+            <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                <input type="text" value="" id="SecurityAnswer" name="SecurityAnswer" class="form-control" placeholder="Enter Security Answer" />
+            </div>
+        </div>
+    </div>
+</div>

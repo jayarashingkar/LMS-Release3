@@ -1,0 +1,79 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<form action="/" method="post">
+    <div class="span12">
+        <table id="datatab" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>MyProperty 1</th>
+                    <th>MyProperty 2</th>
+                    <th>MyProperty 3</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>Id</th>
+                    <th>MyProperty 1</th>
+                    <th>MyProperty 2</th>
+                    <th>MyProperty 3</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</form>
+
+@section scripts{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $('#datatab tfoot th').each(function () {
+                $(this).html('<input type="text" />');
+            });
+
+            var oTable = $('#datatab').DataTable({
+                "serverSide": true,
+                "ajax": {
+                    "type": "POST",
+                    "url": 'Test/DataHandler',
+                    "contentType": 'application/json; charset=utf-8',
+                    'data': function (data) { return data = JSON.stringify(data); }
+                },
+                "dom": 'frtiS',
+                "scrollY": 500,
+                "scrollX": true,
+                "scrollCollapse": true,
+                "scroller": {
+                    loadingIndicator: false
+                },
+                "processing": true,
+                "paging": true,
+                "deferRender": true,
+                "columns": [
+               { "data": "TestModel1Id" },
+               { "data": "MyProperty1" },
+               { "data": "MyProperty2" },
+               { "data": "MyProperty3" },
+                ],
+                "order": [0, "asc"]
+
+            });
+
+            oTable.columns().every(function () {
+                var that = this;
+
+                $('input', this.footer()).on('keyup change', function () {
+                    that
+                        .search(this.value)
+                        .draw();
+                });
+            });
+
+        });
+    </script>
+};
+

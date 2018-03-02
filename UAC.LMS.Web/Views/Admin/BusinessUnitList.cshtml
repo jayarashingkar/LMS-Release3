@@ -1,0 +1,44 @@
+﻿
+@{
+    ViewBag.Title = "Business Units";
+}
+@* Changed  Business Unit to  Location 11/21/2016
+<div class="panel-heading">List of Business Units</div>*@
+<div class="panel-heading">List of Locations</div>
+
+<div class="panel-body">
+    <div class="">
+        @*Changed  Business Unit to  Location 11/21/2016
+            <button id="btnAdd" class="btn btn-success btn-large"><i class="fa fa-plus" aria-hidden="true"></i> Add Business Units</button>*@
+            <button id="btnAdd" class="btn btn-success btn-large"><i class="fa fa-plus" aria-hidden="true"></i> Add Location</button>
+        </div>
+        @{Html.RenderPartial("_Repeater", "businessUnitRepeater");}
+    </div>
+    <div id="popup" style="display:none">
+        <div class="container">
+            <form id="entityform" method="post">
+                <div class="row">
+                    <div class="form-group">
+                        @*Changed  Business Unit to  Location 11/21/2016
+                        <label for="BusinessUnitName" class="cols-sm-2 control-label">Business Unit Name</label>*@
+                        <label for="BusinessUnitName" class="cols-sm-2 control-label">Location Name</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                <input type="text" value="" id="BusinessUnitName" name="BusinessUnitName" class="form-control" placeholder="Enter Business Unit Name" />
+                                <input type="hidden" name="txtId" id="txtId" value="" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    @section scripts{
+        @Scripts.Render("~/bundles/BusinessUnit")
+        <script>
+            $(document).ready(function () {
+                LoadGrid("businessUnitRepeater");
+            });
+        </script>
+    }
