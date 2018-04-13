@@ -57,6 +57,8 @@
                     <a href="#"><span class="fa-stack fa-lg pull-left"><i class="fa fa-users fa-stack-1x " style="color:aqua"></i></span> Employees</a>
                     <ul class="nav-pills nav-stacked" style="list-style-type:none">
                         <li><a href="~/Employee/EmployeeList"><span class="fa-stack fa-lg pull-left"><i class="fa fa-share-square-o fa-stack-1x " style="color:aqua"></i></span>Employee Records</a></li>
+                        <li><a href="~/Employee/ImportEmployeeList"><span class="fa-stack fa-lg pull-left"><i class="fa fa-share-square-o fa-stack-1x " style="color:aqua"></i></span>Import Employees</a></li>
+
                         @*<li><a href="~/Employee/EmployeeCourseList"><span class="fa-stack fa-lg pull-left"><i class="fa fa-book fa-stack-1x "></i></span>Employee Courses</a></li>*@
                     </ul>
                 </li>
@@ -83,7 +85,21 @@
                     </ul>
                 </li>
 
-              
+                <li id="report">
+
+                    <a href="#"><span class="fa-stack fa-lg pull-left"><i class="fa fa-lock fa-stack-1x " style="color:coral"></i></span>Reports</a>
+                    <ul class="nav-pills nav-stacked" style="list-style-type:none;">
+                        @*<li><a href="~/Report/TrainingOverDues1"><span class="fa-stack fa-lg pull-left"><i class="fa fa-file-excel-o fa-stack-1x " style="color:coral"></i></span>Training OverDues</a></li>
+                        <li><a href="~/Report/TrainingnotTaken1"><span class="fa-stack fa-lg pull-left"><i class="fa fa-file-excel-o fa-stack-1x " style="color:coral"></i></span>Training Not Taken</a></li>*@
+                        <li><a href="~/Report/TrainingOverDues"><span class="fa-stack fa-lg pull-left"><i class="fa fa-file-excel-o fa-stack-1x " style="color:coral"></i></span>Training OverDues</a></li>
+                        <li><a href="~/Report/TrainingnotTaken"><span class="fa-stack fa-lg pull-left"><i class="fa fa-file-excel-o fa-stack-1x " style="color:coral"></i></span>Training Not Taken</a></li>
+                         <li><a href="~/Report/EmployeeCoursesTaken"><span class="fa-stack fa-lg pull-left"><i class="fa fa-file-excel-o fa-stack-1x " style="color:coral"></i></span>Employee Courses</a></li>
+
+                        ExportToExcel
+                        @*<li><a href="#"><span class="fa-stack fa-lg pull-left"><i class="fa fa-flag fa-stack-1x "></i></span>Employee Status</a></li>*@
+                    </ul>
+                </li>
+
                 <li>
                     <a href="~/Admin/PrintRoster"> <span class="fa-stack fa-lg pull-left"><i class="fa fa-print fa-stack-1x " style="color:chartreuse"></i></span>Print Roster</a>
                 </li>

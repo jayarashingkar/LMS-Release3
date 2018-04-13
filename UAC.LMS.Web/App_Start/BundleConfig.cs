@@ -92,6 +92,11 @@ namespace UAC.LMS.Web.App_Start
                 "~/Scripts/trainingnottakenreport.js"
                 ));
 
+            bundles.Add(new ScriptBundle("~/bundles/ImportEmployees").Include(
+               "~/Scripts/ImportEmployees.js"
+               ));
+
+            
             //BundleTable.EnableOptimizations = true;
         }
     }

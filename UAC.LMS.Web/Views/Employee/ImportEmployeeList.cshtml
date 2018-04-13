@@ -1,0 +1,55 @@
+﻿@model UAC.LMS.Web.ViewModel.ImportEmployee_VM
+@{
+    ViewBag.Title = "ImportData";
+}
+
+
+<!DOCTYPE html>
+
+@*<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ImportEmployeeList</title>
+</head>
+<body>*@
+<div class="panel-heading">Import Employees</div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-3">
+                <input type="file" id="filePath1" name="filePath1" class="hidden" />
+                <input type="text" id="filePathChoose" name="filePathChoose" class="form-control" placeholder='Choose a file...' />
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-default btn-choose" id="Choose" name="Choose" type="button">Choose</button>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary " id="Import" name="Import">Import</button>
+                    <button type="reset" class="btn btn-danger" id="Reset" name="Reset">Reset</button>
+                </div>
+            </div>
+        </div>
+        @*//ends here*@
+        <div class="row">
+            <div class="col-md-16">
+                <h4>
+                    <label id="lblFileName" class="col-md-16 control-label bg-primary"></label>
+                </h4>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-16">
+                <h4>
+                    <label id="lblImported" class="col-md-16 control-label bg-success"></label>
+                </h4>
+            </div>
+        </div>
+    </div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/ImportEmployees")
+   
+}

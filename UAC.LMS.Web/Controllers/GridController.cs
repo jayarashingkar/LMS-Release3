@@ -1251,6 +1251,8 @@ namespace UAC.LMS.Web.Controllers
             LMSDBContext context = null;
             List<LMSOverDuesTrainings_VM> overdues = null;
             IQueryable<LMSOverDuesTrainings_VM> query = null;
+         //   IQueryable<LMSOverDuesTrainings_VM_Excel> query = null;// new List<LMSOverDuesTrainings_VM_Excel>();
+
             int total = 0;
             try
             {
@@ -1272,7 +1274,7 @@ namespace UAC.LMS.Web.Controllers
                 //         });
                 query = (from emp in context.LMSEmployees.Where(j => j.StatusCode.ToLower() == "active")
                          join empcourse in context.LMSEmployeeCourses.Where(x => x.CompletedDate == null) on emp.LMSEmployeeId equals empcourse.LMSEmployeeId
-                         join course in context.LMSCourses on empcourse.LMSCourseId equals course.LMSCourseId
+                         join course in context.LMSCourses on empcourse.LMSCourseId equals course.LMSCourseId                        
                          select new LMSOverDuesTrainings_VM
                          {
                              //LMSEmployeeId = emp.LMSEmployeeId,

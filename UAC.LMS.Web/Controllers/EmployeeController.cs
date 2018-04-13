@@ -6,8 +6,10 @@ using UAC.LMS.Common.Constants;
 using UAC.LMS.DAL;
 using UAC.LMS.Models;
 using UAC.LMS.Web.ViewModel;
-
 using System.Data.Entity.Validation;
+using Microsoft.VisualBasic.FileIO;
+using System.IO;
+using System.Text;
 
 namespace UAC.LMS.Web.Controllers
 {
@@ -100,7 +102,7 @@ namespace UAC.LMS.Web.Controllers
             bool isSuccess = false;
             string message = string.Empty;
             int LMSEmployeeId = 0;
-            
+
             try
             {
                 if (model != null)
@@ -281,6 +283,252 @@ namespace UAC.LMS.Web.Controllers
             }
             return Json(new { isSuccess = isSuccess }, JsonRequestBehavior.AllowGet);
         }
+
+        //      public ActionResult SaveEmployee(LMSEmployee model)
+
+        //     public ActionResult ImportEmployeeList(LMSEmployee model)
+
+        public ActionResult ImportEmployeeList()
+        {
+            return View();
+
+        }
+       
+        public ActionResult SaveImportEmployees(string filePath)
+        {
+            //  Message_VM message;
+            bool isSuccess = false;
+            //  string message = string.Empty;
+            // string filename = Message;
+            string Message = "";
+            List<ImportEmployee_VM> listEmployeeData = new List<ImportEmployee_VM>();
+            int LMSEmployeeId = 0;
+            try
+            {
+
+                isSuccess = true;
+                Message = "Employees Imported";
+                LMSEmployeeId = 3;
+                // var textFieldParser = new TextFieldParser(new StringReader(File.ReadAllText(filePath)))
+
+                var textFieldParser = new TextFieldParser(new StringReader(System.IO.File.ReadAllText(filePath)))
+                {
+                    Delimiters = new string[] { "," }
+                };
+                ///var textFieldParser = new TextFieldParser(new StringReader(FileSystem.ReadAllText(filePath)))
+                //{
+                //    Delimiters = new string[] { "," }
+                //};
+                while (!textFieldParser.EndOfData)
+                {
+                    var entry = textFieldParser.ReadFields();
+                    listEmployeeData.Add(new ImportEmployee_VM()
+                    {
+                        EmployeeNo = Convert.ToString(entry[0]),
+                        FirstName = Convert.ToString(entry[1]),
+                        LastName = Convert.ToString(entry[2]),
+                        MiddleName = Convert.ToString(entry[3]),
+                        Email = Convert.ToString(entry[4]),
+                        HireDate = Convert.ToDateTime(entry[5]),
+                        LMSDepartmentId = Convert.ToInt32(entry[6]),
+                        DepartmentCode = Convert.ToString(entry[7]),
+                        LMSJobTitleId = Convert.ToInt32(entry[8]),
+                        JobTitleName = Convert.ToString(entry[9]),
+                        LMSBusinessUnitId = Convert.ToInt32(entry[10]),
+                        DepartmentName = Convert.ToString(entry[11]),
+                        Status = Convert.ToString(entry[12]),
+                        Shift = Convert.ToString(entry[13])
+                    });
+                }
+                textFieldParser.Close();
+
+                int introw = 0;
+
+                while (introw < listEmployeeData.Count)
+                {
+                    LMSEmployee model = new LMSEmployee();
+                    LMSEmployeeId = model.LMSEmployeeId;
+                    //   var empCount = unitofwork.LMSEmployeeRepository.Get(x => x.LMSEmployeeId != model.LMSEmployeeId && x.EmployeeNo == model.EmployeeNo).Count();
+                    //   if (empCount == 0)
+                    //    {
+                    model.EmployeeNo = listEmployeeData[introw].EmployeeNo;
+                    model.FirstName = listEmployeeData[introw].FirstName;
+                    model.LastName = listEmployeeData[introw].LastName;
+                    model.MiddleName = listEmployeeData[introw].MiddleName;
+                    model.Email = listEmployeeData[introw].Email;
+                    model.HireDate = listEmployeeData[introw].HireDate;
+                    model.IsInitialOrientationApplied = false;
+                    model.Shift = listEmployeeData[introw].Shift;
+                    model.StatusCode = listEmployeeData[introw].Status;
+                    model.CreatedBy = LoggedInUser.UserId;
+                    model.CreatedOn = DateTime.Now;
+                    model.LastModifiedBy = LoggedInUser.UserId;
+                    model.LastModifiedOn = DateTime.Now;
+
+                    unitofwork.LMSEmployeeRepository.Insert(model);
+                    unitofwork.Save();
+                    isSuccess = true;                  
+                    LMSDBContext context = new LMSDBContext();
+
+                    // Add new Employee record in LMSEmployee
+                    model.CreatedBy = LoggedInUser.UserId;
+                    model.CreatedOn = DateTime.Now;
+                    unitofwork.LMSEmployeeRepository.Insert(model);
+                    unitofwork.Save();
+                    isSuccess = true;
+
+                    // Add new record in LMSAudit of Adding new Employee record in LMSEmployee                            
+                    LMSAudit lmsAudit = new LMSAudit();
+                    lmsAudit.TransactionDate = DateTime.Now;
+                    lmsAudit.UserName = LoggedInUser.UserName;
+                    lmsAudit.FullName = LoggedInUser.FullName;
+                    lmsAudit.Section = "Employee";
+                    lmsAudit.Action = "Add";
+                    lmsAudit.Description = String.Format("Added new Employee: {0} (Employee No:{1}) ", model.FullName, model.EmployeeNo);
+                    unitofwork.LMSAuditRepository.Insert(lmsAudit);
+                    unitofwork.Save();
+                    LMSEmployeeId = model.LMSEmployeeId;
+
+                    introw++;
+                }
+            }           
+            catch (Exception ex)
+            {
+                //throw ex;
+                isSuccess = false;               
+                Message = ex.ToString();
+            }
+            return Json(new { isSuccess = isSuccess, message = Message, LMSEmployeeId = LMSEmployeeId }, JsonRequestBehavior.AllowGet);
+
+    }
+        #region save
+
+        //try
+        //{
+        //    if (model != null)
+        //    {
+        //        if (model.LMSEmployeeId > 0)
+        //        {
+        //            LMSEmployeeId = model.LMSEmployeeId;
+        //            var empCount = unitofwork.LMSEmployeeRepository.Get(x => x.LMSEmployeeId != model.LMSEmployeeId && x.EmployeeNo == model.EmployeeNo).Count();
+        //            if (empCount == 0)
+        //            {
+        //                // Edit Employee Information 
+
+        //                var entity = unitofwork.LMSEmployeeRepository.GetByID(model.LMSEmployeeId);
+
+        //                LMSEmployee oldEntity = new LMSEmployee();
+        //                oldEntity.EmployeeNo = entity.EmployeeNo;
+        //                oldEntity.FirstName = entity.FirstName;
+        //                oldEntity.LastName = entity.LastName;
+        //                oldEntity.MiddleName = entity.MiddleName;
+        //                oldEntity.HireDate = entity.HireDate;
+        //                oldEntity.Shift = entity.Shift;
+
+        //                oldEntity.LMSBusinessUnitId = entity.LMSBusinessUnitId;
+        //                var bussniessEntity = unitofwork.LMSBusinessUnitRepository.GetByID(entity.LMSBusinessUnitId);
+        //                var businessModel = unitofwork.LMSBusinessUnitRepository.GetByID(model.LMSBusinessUnitId);
+
+        //                oldEntity.LMSDepartmentId = entity.LMSDepartmentId;
+        //                var departmentEntity = unitofwork.LMSDepartmentRepository.GetByID(entity.LMSDepartmentId);
+        //                var departmentModel = unitofwork.LMSDepartmentRepository.GetByID(model.LMSDepartmentId);
+
+        //                oldEntity.LMSJobTitleId = entity.LMSJobTitleId;
+        //                var jobTitleEntity = unitofwork.LMSJobTitleRepository.GetByID(entity.LMSJobTitleId);
+        //                var jobTitleModel = unitofwork.LMSJobTitleRepository.GetByID(model.LMSJobTitleId);
+
+        //                entity.FirstName = model.FirstName;
+        //                entity.LastName = model.LastName;
+        //                entity.MiddleName = model.MiddleName;
+        //                entity.EmployeeNo = model.EmployeeNo;
+        //                entity.HireDate = model.HireDate;
+        //                entity.Shift = model.Shift;
+        //                entity.LMSDepartmentId = model.LMSDepartmentId;
+        //                entity.LMSBusinessUnitId = model.LMSBusinessUnitId;
+        //                entity.LMSJobTitleId = model.LMSJobTitleId;
+        //                entity.StatusCode = model.StatusCode;
+        //                entity.LastModifiedBy = LoggedInUser.UserId;
+        //                entity.LastModifiedOn = DateTime.Now;
+
+        //                //changing here
+
+        //                unitofwork.LMSEmployeeRepository.Update(entity);
+
+        //                unitofwork.Save();
+        //                isSuccess = true;
+
+        //                // Add a record to LMSAudit, of editing Employee information 
+
+        //                LMSAudit lmsAudit = new LMSAudit();
+        //                lmsAudit.TransactionDate = DateTime.Now;
+        //                lmsAudit.UserName = LoggedInUser.UserName;
+        //                lmsAudit.FullName = LoggedInUser.FullName;
+        //                lmsAudit.Section = "Employee";
+        //                lmsAudit.Action = "Edit";
+        //                lmsAudit.Description = String.Format("Edited Employee :{0}, {1} ", oldEntity.EmployeeNo, oldEntity.FullName);
+
+        //                if (oldEntity.FirstName != model.FirstName)
+        //                    lmsAudit.Description += String.Format(" * Edited Employee First Name: {0} to {1}", oldEntity.FirstName, model.FirstName);
+        //                if (oldEntity.LastName != model.LastName)
+        //                    lmsAudit.Description += String.Format(" * Edited Employee Last Name: {0} to {1}", oldEntity.LastName, model.LastName);
+        //                if (oldEntity.MiddleName != model.MiddleName)
+        //                    lmsAudit.Description += String.Format(" * Edited Employee Middle Name: {0} to {1}", oldEntity.MiddleName, model.MiddleName);
+        //                if (oldEntity.EmployeeNo != model.EmployeeNo)
+        //                    lmsAudit.Description += String.Format(" * Edited Employee Number: {0} to {1}", oldEntity.EmployeeNo, model.EmployeeNo);
+        //                if (oldEntity.HireDate != model.HireDate)
+        //                    lmsAudit.Description += String.Format(" * Edited Employee Hire Date: {0} to {1}", oldEntity.HireDate, model.HireDate);
+        //                if (oldEntity.Shift != model.Shift)
+        //                    lmsAudit.Description += String.Format(" * Edited Employee Shift: {0} to {1}", oldEntity.Shift, model.Shift);
+        //                if (oldEntity.LMSDepartmentId != model.LMSDepartmentId)
+        //                    lmsAudit.Description += String.Format(" * Edited Employee Department: {0} to {1}", departmentEntity.DepartmentName, departmentModel.DepartmentName);
+
+        //                // Changed  Business Unit to  Location 11/21/2016
+        //                if (oldEntity.LMSBusinessUnitId != model.LMSBusinessUnitId)
+        //                    // lmsAudit.Description += String.Format(" * Edited Employee Business Unit: {0} to {1}", bussniessEntity.BusinessUnitName, businessModel.BusinessUnitName);
+        //                    lmsAudit.Description += String.Format(" * Edited Employee Location: {0} to {1}", bussniessEntity.BusinessUnitName, businessModel.BusinessUnitName);
+
+        //                if (oldEntity.LMSJobTitleId != model.LMSJobTitleId)
+        //                    lmsAudit.Description += String.Format(" * Edited Employee Job Title: {0} to {1}", jobTitleEntity.JobTitleName, jobTitleModel.JobTitleName);
+
+        //                unitofwork.LMSAuditRepository.Insert(lmsAudit);
+        //                unitofwork.Save();
+        //            }
+        //            else
+        //                message = "Employee with same employee number already exists.";
+        //        }
+        //        else
+        //        {
+        //            LMSDBContext context = new LMSDBContext();
+        //            var empCount = context.LMSEmployees.Count(x => x.EmployeeNo == model.EmployeeNo);
+        //            if (empCount == 0)
+        //            {
+        //                // Add new Employee record in LMSEmployee
+        //                model.CreatedBy = LoggedInUser.UserId;
+        //                model.CreatedOn = DateTime.Now;
+        //                unitofwork.LMSEmployeeRepository.Insert(model);
+        //                unitofwork.Save();
+        //                isSuccess = true;
+
+        //                // Add new record in LMSAudit of Adding new Employee record in LMSEmployee                            
+        //                LMSAudit lmsAudit = new LMSAudit();
+        //                lmsAudit.TransactionDate = DateTime.Now;
+        //                lmsAudit.UserName = LoggedInUser.UserName;
+        //                lmsAudit.FullName = LoggedInUser.FullName;
+        //                lmsAudit.Section = "Employee";
+        //                lmsAudit.Action = "Add";
+        //                lmsAudit.Description = String.Format("Added new Employee: {0} (Employee No:{1}) ", model.FullName, model.EmployeeNo);
+        //                unitofwork.LMSAuditRepository.Insert(lmsAudit);
+        //                unitofwork.Save();
+        //                LMSEmployeeId = model.LMSEmployeeId;
+        //            }
+        //            else
+        //                message = "Employee with same employee number already exists.";
+        //        }
+        //    }
+        //}
+        #endregion
+
+
 
         #endregion
         #region EmployeeCourse

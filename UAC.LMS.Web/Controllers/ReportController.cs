@@ -35,7 +35,7 @@ namespace UAC.LMS.Web.Controllers
         public ActionResult TrainingnotTaken(string data)
         {
             ExportToExcel("TrainingNotTaken");
-            return View();
+            return View("TrainingNotTaken");
         }
 
         public void TrainingnotTaken1()
@@ -221,6 +221,11 @@ namespace UAC.LMS.Web.Controllers
                 }));
             }
             return excel;
+        }
+
+        public ActionResult EmployeeCoursesTaken()
+        {
+            return View();
         }
     }
 }

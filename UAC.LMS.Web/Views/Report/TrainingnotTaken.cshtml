@@ -1,6 +1,7 @@
 ﻿@{
     ViewBag.Title = "Training not Taken Report";
 }
+
 <div class="panel-heading">Training Not Taken</div>
 
 <div class="panel-body">
@@ -8,8 +9,43 @@
     @using (Html.BeginForm("TrainingnotTaken", "Report", FormMethod.Post, new { id = "reportForm", name = "reportForm" }))
     {
         <div class="">
-            <button id="btnExport" class="btn btn-success btn-large"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export</button>
-        </div>
+            <button type="submit" id="btnExport" class="btn btn-success btn-large"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export</button>          
+              
+            <div class="row">                   
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="CourseNo" class="cols-sm-2 control-label">Course No</label>
+                            <div class="cols-sm-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                    <input type="text" value="" id="CourseNo" name="CourseNo" class="form-control" placeholder="Enter Course No" />
+                                    <input type="hidden" name="txtId" id="txtId" value="" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="" class="cols-sm-2 control-label"></label>
+                            <div class="cols-sm-10">
+                                <button type="button" id="btnSearch" class="btn btn-primary btn-large"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="" class="cols-sm-2 control-label"></label>
+                            <div class="cols-sm-10">
+                                <button type="button" id="btnClear" class="btn btn-primary btn-large"><i class="fa fa-times" aria-hidden="true"></i> Clear</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+    </div>
         { Html.RenderPartial("_Repeater", "trainingnotTakenReportRepeater"); }
     }
 </div>

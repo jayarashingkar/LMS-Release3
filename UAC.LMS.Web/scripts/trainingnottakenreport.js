@@ -11,7 +11,7 @@ var columns = [
         sortable: true
     },
     {
-        label: 'Empl#',
+        label: 'Employee No',
         property: 'EmployeeNo',
         sortable: true
     },
@@ -85,6 +85,7 @@ function customColumnRenderer(helpers, callback) {
 function customRowRenderer(helpers, callback) {
     // let's get the id and add it to the "tr" DOM element
     var item = helpers.item;
+    //  item.attr('id', 'row' + helpers.rowData.EmployeeNo);
     item.attr('id', 'row' + helpers.rowData.EmployeeNo);
 
     callback();
@@ -94,8 +95,13 @@ function customRowRenderer(helpers, callback) {
 // the API handles filtering, sorting, searching, etc.
 function customDataSource(options, callback) {
     // set options
+    debugger;
     var pageIndex = options.pageIndex;
     var pageSize = options.pageSize;
+    var search = '';
+    if ($('#CourseNo').val())
+        search += ';' + 'CourseNo:' + $('#CourseNo').val();
+
     var options = {
         pageIndex: pageIndex,
         pageSize: pageSize,
@@ -140,4 +146,16 @@ $(document).ready(function () {
     $('#btnExport').on('click', function () {
         document.getElementById('reportForm').submit();
     });
+});
+
+$('#btnSearch').on('click', function () {
+    debugger;
+    $('#trainingnotTakenReportRepeater').repeater('render');
+});
+
+
+$('#btnClear').on('click', function () {
+        $('#CourseNo').val('');
+  
+    $('#trainingnotTakenReportRepeater').repeater('render');
 });
