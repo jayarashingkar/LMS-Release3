@@ -17,13 +17,25 @@
                             <label for="CourseNo" class="cols-sm-2 control-label">Course No</label>
                             <div class="cols-sm-10">
                                 <div class="input-group">
-                                    <span class="input-group-addon"><i class="fa fa-text-width" aria-hidden="true"></i></span>
+                                    <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
                                     <input type="text" value="" id="CourseNo" name="CourseNo" class="form-control" placeholder="Enter Course No" />
                                     <input type="hidden" name="txtId" id="txtId" value="" />
                                 </div>
                             </div>
                         </div>
                     </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="Department" class="cols-sm-2 control-label">Department</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                                <input type="text" value="" id="Department" name="Department" class="form-control" placeholder="Enter Department" />
+                                <input type="hidden" name="txtId" id="txtId" value="" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4">
@@ -45,7 +57,7 @@
                         </div>
                     </div>
                 </div>
-    </div>
+        </div>
         { Html.RenderPartial("_Repeater", "trainingnotTakenReportRepeater"); }
     }
 </div>

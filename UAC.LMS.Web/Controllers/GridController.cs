@@ -1175,8 +1175,54 @@ namespace UAC.LMS.Web.Controllers
                              Department = emp.LMSDepartment.DepartmentName,
                              CompletedDate = empcourse.CompletedDate,
                              DueDate = empcourse.DueDate,
-                            //   });
-                         }).OrderByDescending(j=>j.DueDate).Take(50);
+                             //   });
+                         }).OrderByDescending(j => j.DueDate);//.Take(50);
+
+                if (!string.IsNullOrEmpty(option.searchBy) && !option.searchBy.Equals(""))
+                {
+                    string[] searchSplit = option.searchBy.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (searchSplit != null && searchSplit.Length > 0)
+                    {
+                        foreach (var item in searchSplit)
+                        {
+                            if (!string.IsNullOrEmpty(item))
+                            {
+                                var itemSplit = item.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                                if (itemSplit != null && itemSplit.Length == 2)
+                                {
+                                    var value = itemSplit[1];
+                                    if (!string.IsNullOrEmpty(value) && value.Trim() != "")
+                                    {
+                                        if (itemSplit[0] == "CourseNo")
+                                        {
+                                            query = from p in query
+                                                    where (
+                                                        p.CourseNo.ToLower().Contains(value.Trim())
+                                                    )
+                                                    select p;
+                                        }
+                                        if (itemSplit[0] == "Department")
+                                        {
+                                            query = from p in query
+                                                    where (
+                                                        p.Department.ToLower().Contains(value.Trim())
+                                                    )
+                                                    select p;
+                                        }
+                                        if (itemSplit[0] == "EmployeeNo")
+                                        {
+                                            query = from p in query
+                                                    where (
+                                                        p.EmployeeNo.ToLower().Contains(value.Trim())
+                                                    )
+                                                    select p;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 if (!string.IsNullOrEmpty(option.sortBy))
                 {
                     if (option.sortBy == "EmployeeNo")
@@ -1235,8 +1281,12 @@ namespace UAC.LMS.Web.Controllers
                 }
                 else
                 {
-                    overdues = query.ToList();
+                    overdues = query.OrderByDescending(x => x.EmployeeNo).Skip(option.pageSize * option.pageIndex).Take(option.pageSize).ToList();
                 }
+                //else
+                //{
+                //    overdues = query.ToList();
+                //}
                 total = query.Count();
             }
             catch (Exception ex)
@@ -1274,7 +1324,7 @@ namespace UAC.LMS.Web.Controllers
                 //         });
                 query = (from emp in context.LMSEmployees.Where(j => j.StatusCode.ToLower() == "active")
                          join empcourse in context.LMSEmployeeCourses.Where(x => x.CompletedDate == null) on emp.LMSEmployeeId equals empcourse.LMSEmployeeId
-                         join course in context.LMSCourses on empcourse.LMSCourseId equals course.LMSCourseId                        
+                         join course in context.LMSCourses on empcourse.LMSCourseId equals course.LMSCourseId
                          select new LMSOverDuesTrainings_VM
                          {
                              //LMSEmployeeId = emp.LMSEmployeeId,
@@ -1286,8 +1336,55 @@ namespace UAC.LMS.Web.Controllers
                              Department = emp.LMSDepartment.DepartmentName,
                              CompletedDate = empcourse.CompletedDate,
                              DueDate = empcourse.DueDate,
-                       //  });
-                         }).OrderByDescending(j => j.DueDate).Take(50);
+                             //  });
+                         }).OrderByDescending(j => j.DueDate);//.Take(50);
+
+                if (!string.IsNullOrEmpty(option.searchBy) && !option.searchBy.Equals(""))
+                {
+                    string[] searchSplit = option.searchBy.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (searchSplit != null && searchSplit.Length > 0)
+                    {
+                        foreach (var item in searchSplit)
+                        {
+                            if (!string.IsNullOrEmpty(item))
+                            {
+                                var itemSplit = item.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                                if (itemSplit != null && itemSplit.Length == 2)
+                                {
+                                    var value = itemSplit[1];
+                                    if (!string.IsNullOrEmpty(value) && value.Trim() != "")
+                                    {
+                                        if (itemSplit[0] == "CourseNo")
+                                        {
+                                            query = from p in query
+                                                    where (
+                                                        p.CourseNo.ToLower().Contains(value.Trim())
+                                                    )
+                                                    select p;
+                                        }
+                                        if (itemSplit[0] == "Department")
+                                        {
+                                            query = from p in query
+                                                    where (
+                                                        p.Department.ToLower().Contains(value.Trim())
+                                                    )
+                                                    select p;
+                                        }
+                                        if (itemSplit[0] == "EmployeeNo")
+                                        {
+                                            query = from p in query
+                                                    where (
+                                                        p.EmployeeNo.ToLower().Contains(value.Trim())
+                                                    )
+                                                    select p;
+                                        }                                        
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 if (!string.IsNullOrEmpty(option.sortBy))
                 {
                     if (option.sortBy == "EmployeeNo")
@@ -1346,8 +1443,12 @@ namespace UAC.LMS.Web.Controllers
                 }
                 else
                 {
-                    overdues = query.ToList();
+                    overdues = query.OrderByDescending(x => x.EmployeeNo).Skip(option.pageSize * option.pageIndex).Take(option.pageSize).ToList();
                 }
+                //else
+                //{
+                //    overdues = query.ToList();
+                //}
                 total = query.Count();
             }
             catch (Exception ex)

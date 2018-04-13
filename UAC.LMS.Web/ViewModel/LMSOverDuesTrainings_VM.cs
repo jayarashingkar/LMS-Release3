@@ -4,7 +4,7 @@ namespace UAC.LMS.Web.ViewModel
 {
     public class LMSOverDuesTrainings_VM
     {
-        //public int LMSEmployeeId { get; set; }
+       // public int LMSEmployeeId { get; set; }
         public string EmployeeName { get; set; }
         public string EmployeeNo { get; set; }
         public string TrainingEvent { get; set; }

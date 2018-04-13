@@ -101,6 +101,8 @@ function customDataSource(options, callback) {
     var search = '';
     if ($('#CourseNo').val())
         search += ';' + 'CourseNo:' + $('#CourseNo').val();
+  if ($('#Department').val())
+        search += ';' + 'Department:' +$('#Department').val();
 
     var options = {
         pageIndex: pageIndex,
@@ -108,7 +110,7 @@ function customDataSource(options, callback) {
         sortDirection: options.sortDirection,
         sortBy: options.sortProperty,
         filterBy: options.filter.value || '',
-        searchBy: options.search || ''
+        searchBy: search || ''
     };
     // call API, posting options
     $.ajax({
@@ -156,6 +158,6 @@ $('#btnSearch').on('click', function () {
 
 $('#btnClear').on('click', function () {
         $('#CourseNo').val('');
-  
+   $('#Department').val('');
     $('#trainingnotTakenReportRepeater').repeater('render');
 });

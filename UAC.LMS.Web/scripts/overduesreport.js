@@ -99,9 +99,11 @@ function customDataSource(options, callback) {
     var pageIndex = options.pageIndex;
     var pageSize = options.pageSize;
 
-    var search = '';
+  var search = '';
     if ($('#CourseNo').val())
         search += ';' + 'CourseNo:' + $('#CourseNo').val();
+  if ($('#Department').val())
+        search += ';' + 'Department:' +$('#Department').val();
 
     var options = {
         pageIndex: pageIndex,
@@ -109,7 +111,7 @@ function customDataSource(options, callback) {
         sortDirection: options.sortDirection,
         sortBy: options.sortProperty,
         filterBy: options.filter.value || '',
-        searchBy: options.search || ''
+        searchBy: search || ''
     };
     // call API, posting options
     $.ajax({
@@ -150,14 +152,14 @@ $(document).ready(function () {
     });
 });
 
-//$('#btnSearch').on('click', function () {
-//    debugger;
-//    $('#trainingnotTakenReportRepeater').repeater('render');
-//});
+$('#btnSearch').on('click', function () {
+    debugger;
+    $('#overduesReportRepeater').repeater('render');
+});
 
 
-//$('#btnClear').on('click', function () {
-//    $('#CourseNo').val('');
-
-//    $('#trainingnotTakenReportRepeater').repeater('render');
-//});
+$('#btnClear').on('click', function () {
+        $('#CourseNo').val('');
+   $('#Department').val('');
+   $('#overduesReportRepeater').repeater('render');
+});
