@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
+
 namespace UAC.LMS.Web.ViewModel
 {
     public class ImportEmployee_VM
@@ -22,6 +23,9 @@ namespace UAC.LMS.Web.ViewModel
         public string JobTitleName { get; set; }
         public int LMSBusinessUnitId { get; set; }
         public string Status { get; set; }
+
+        //    public bool ParseEmployeeExcel(string path)
+    
 
     }
 }

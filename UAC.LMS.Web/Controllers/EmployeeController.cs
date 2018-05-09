@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using System.Web.Mvc;
 using UAC.LMS.Common.Constants;
 using UAC.LMS.DAL;
@@ -10,6 +11,12 @@ using System.Data.Entity.Validation;
 using Microsoft.VisualBasic.FileIO;
 using System.IO;
 using System.Text;
+using System.Web;
+
+
+using System.Data;
+using System.Data.OleDb;
+using System.Threading.Tasks;
 
 namespace UAC.LMS.Web.Controllers
 {
@@ -107,6 +114,7 @@ namespace UAC.LMS.Web.Controllers
             {
                 if (model != null)
                 {
+                    #region Edit Employee
                     if (model.LMSEmployeeId > 0)
                     {
                         LMSEmployeeId = model.LMSEmployeeId;
@@ -196,8 +204,13 @@ namespace UAC.LMS.Web.Controllers
                         else
                             message = "Employee with same employee number already exists.";
                     }
+                    #endregion
                     else
                     {
+                        //Message_VM result = new Message_VM();
+                        //result = saveEmployeeInfo(model);
+                        //message = result.Message;
+                        //isSuccess = result.isSuccess; 
                         LMSDBContext context = new LMSDBContext();
                         var empCount = context.LMSEmployees.Count(x => x.EmployeeNo == model.EmployeeNo);
                         if (empCount == 0)
@@ -288,247 +301,406 @@ namespace UAC.LMS.Web.Controllers
 
         //     public ActionResult ImportEmployeeList(LMSEmployee model)
 
-        public ActionResult ImportEmployeeList()
+       private Message_VM saveEmployeeInfo(LMSEmployee model)
         {
+            Message_VM result = new Message_VM();
+            result.isSuccess = true;
+            result.Message = "";
+
+            LMSDBContext context = new LMSDBContext();
+            var empCount = context.LMSEmployees.Count(x => x.EmployeeNo == model.EmployeeNo);
+            if (empCount == 0)
+            {
+                // Add new Employee record in LMSEmployee
+                model.CreatedBy = LoggedInUser.UserId;
+                model.CreatedOn = DateTime.Now;
+                unitofwork.LMSEmployeeRepository.Insert(model);
+                unitofwork.Save();
+                result.isSuccess = true;
+                result.Message = "File Imported";
+
+                // Add new record in LMSAudit of Adding new Employee record in LMSEmployee                            
+                LMSAudit lmsAudit = new LMSAudit();
+                lmsAudit.TransactionDate = DateTime.Now;
+                lmsAudit.UserName = LoggedInUser.UserName;
+                lmsAudit.FullName = LoggedInUser.FullName;
+                lmsAudit.Section = "Employee";
+                lmsAudit.Action = "Add";
+                lmsAudit.Description = String.Format("Added new Employee: {0} (Employee No:{1}) ", model.FullName, model.EmployeeNo);
+                unitofwork.LMSAuditRepository.Insert(lmsAudit);
+                unitofwork.Save();
+             //   LMSEmployeeId = model.LMSEmployeeId;
+            }
+            else
+            {
+                result.Message = model.EmployeeNo;
+                result.isSuccess = false;
+            }
+                
+            return result;
+        }
+        #region import employee  
+        public ActionResult ImportEmployeeList(string Message ="none")
+        {
+            if (Message.Trim()!= "none")
+                 ViewBag.Message = Message;
+            else
+                ViewBag.Message =  "";
+
             return View();
 
         }
-       
-        public ActionResult SaveImportEmployees(string filePath)
+
+
+        //[HttpPost]
+        //public ActionResult UploadExcel(HttpPostedFileBase file)
+        //{
+        //    if (file != null && file.ContentLength > 0)
+        //    {
+        //        //var fileName = Path.GetFileName(file.FileName);
+        //        //BinaryReader b = new BinaryReader(file.InputStream);
+        //        //byte[] binData = b.ReadBytes(file.ContentLength);
+        //        //string result = System.Text.Encoding.UTF8.GetString(binData);
+        //        string path = Path.GetTempPath() + file.FileName;
+        //        path = "C:\\Users\\jaya.rashingkar\\AppData\\Local\\Temp\\Import Employees Test3.xlsx";
+
+        //        try
+        //        {
+
+        //            file.SaveAs(path);
+        //            new EmployeeParser().ParseEmployeeExcel(path);
+
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            throw ex;
+        //        }
+        //        finally
+        //        {
+        //            System.IO.File.Delete(path);
+        //        }
+        //        ViewBag.Message = "Excel File parsed successfully";
+        //    }
+        //    else
+        //    {
+        //        ViewBag.Message = "Excel File not selected";
+        //    }
+
+        //    return View("Index");
+        //}
+        [HttpPost]
+
+        // public ActionResult SaveImportEmployees(HttpPostedFileBase file)
+        public ActionResult ImportEmployees(HttpPostedFileBase file)
         {
-            //  Message_VM message;
-            bool isSuccess = false;
-            //  string message = string.Empty;
-            // string filename = Message;
-            string Message = "";
-            List<ImportEmployee_VM> listEmployeeData = new List<ImportEmployee_VM>();
-            int LMSEmployeeId = 0;
-            try
+            Message_VM returnResult = new Message_VM();
+            returnResult.isSuccess = true;
+            returnResult.Message = "";
+            var fileName = Path.GetFileName(file.FileName);
+            BinaryReader b = new BinaryReader(file.InputStream);
+            byte[] binData = b.ReadBytes(file.ContentLength);
+            string result = System.Text.Encoding.UTF8.GetString(binData);
+            //string filePath = Path.GetTempPath() + file.FileName;
+            string filePath = Path.GetTempPath() + fileName;
+            file.SaveAs(filePath);
+          
+            if (filePath != null)
             {
-
-                isSuccess = true;
-                Message = "Employees Imported";
-                LMSEmployeeId = 3;
-                // var textFieldParser = new TextFieldParser(new StringReader(File.ReadAllText(filePath)))
-
-                var textFieldParser = new TextFieldParser(new StringReader(System.IO.File.ReadAllText(filePath)))
+                try
                 {
-                    Delimiters = new string[] { "," }
-                };
-                ///var textFieldParser = new TextFieldParser(new StringReader(FileSystem.ReadAllText(filePath)))
-                //{
-                //    Delimiters = new string[] { "," }
-                //};
-                while (!textFieldParser.EndOfData)
-                {
-                    var entry = textFieldParser.ReadFields();
-                    listEmployeeData.Add(new ImportEmployee_VM()
+                    returnResult = ParseEmployeeExcel(filePath);
+                    if (returnResult.isSuccess)
+                        returnResult.Message = "File successfully imported";
+                    else
+                        returnResult.Message = "Import Error for : " + returnResult.Message;
+
+                }
+                catch (Exception ex)
                     {
-                        EmployeeNo = Convert.ToString(entry[0]),
-                        FirstName = Convert.ToString(entry[1]),
-                        LastName = Convert.ToString(entry[2]),
-                        MiddleName = Convert.ToString(entry[3]),
-                        Email = Convert.ToString(entry[4]),
-                        HireDate = Convert.ToDateTime(entry[5]),
-                        LMSDepartmentId = Convert.ToInt32(entry[6]),
-                        DepartmentCode = Convert.ToString(entry[7]),
-                        LMSJobTitleId = Convert.ToInt32(entry[8]),
-                        JobTitleName = Convert.ToString(entry[9]),
-                        LMSBusinessUnitId = Convert.ToInt32(entry[10]),
-                        DepartmentName = Convert.ToString(entry[11]),
-                        Status = Convert.ToString(entry[12]),
-                        Shift = Convert.ToString(entry[13])
-                    });
-                }
-                textFieldParser.Close();
-
-                int introw = 0;
-
-                while (introw < listEmployeeData.Count)
+                    //throw ex;
+                    returnResult.isSuccess = false;
+                    returnResult.Message = ex.ToString();
+                    }
+                finally
                 {
-                    LMSEmployee model = new LMSEmployee();
-                    LMSEmployeeId = model.LMSEmployeeId;
-                    //   var empCount = unitofwork.LMSEmployeeRepository.Get(x => x.LMSEmployeeId != model.LMSEmployeeId && x.EmployeeNo == model.EmployeeNo).Count();
-                    //   if (empCount == 0)
-                    //    {
-                    model.EmployeeNo = listEmployeeData[introw].EmployeeNo;
-                    model.FirstName = listEmployeeData[introw].FirstName;
-                    model.LastName = listEmployeeData[introw].LastName;
-                    model.MiddleName = listEmployeeData[introw].MiddleName;
-                    model.Email = listEmployeeData[introw].Email;
-                    model.HireDate = listEmployeeData[introw].HireDate;
-                    model.IsInitialOrientationApplied = false;
-                    model.Shift = listEmployeeData[introw].Shift;
-                    model.StatusCode = listEmployeeData[introw].Status;
-                    model.CreatedBy = LoggedInUser.UserId;
-                    model.CreatedOn = DateTime.Now;
-                    model.LastModifiedBy = LoggedInUser.UserId;
-                    model.LastModifiedOn = DateTime.Now;
-
-                    unitofwork.LMSEmployeeRepository.Insert(model);
-                    unitofwork.Save();
-                    isSuccess = true;                  
-                    LMSDBContext context = new LMSDBContext();
-
-                    // Add new Employee record in LMSEmployee
-                    model.CreatedBy = LoggedInUser.UserId;
-                    model.CreatedOn = DateTime.Now;
-                    unitofwork.LMSEmployeeRepository.Insert(model);
-                    unitofwork.Save();
-                    isSuccess = true;
-
-                    // Add new record in LMSAudit of Adding new Employee record in LMSEmployee                            
-                    LMSAudit lmsAudit = new LMSAudit();
-                    lmsAudit.TransactionDate = DateTime.Now;
-                    lmsAudit.UserName = LoggedInUser.UserName;
-                    lmsAudit.FullName = LoggedInUser.FullName;
-                    lmsAudit.Section = "Employee";
-                    lmsAudit.Action = "Add";
-                    lmsAudit.Description = String.Format("Added new Employee: {0} (Employee No:{1}) ", model.FullName, model.EmployeeNo);
-                    unitofwork.LMSAuditRepository.Insert(lmsAudit);
-                    unitofwork.Save();
-                    LMSEmployeeId = model.LMSEmployeeId;
-
-                    introw++;
-                }
-            }           
-            catch (Exception ex)
-            {
-                //throw ex;
-                isSuccess = false;               
-                Message = ex.ToString();
+                    // System.IO.File.Delete(path);
+                    System.IO.File.Delete(filePath);
+                }      
             }
-            return Json(new { isSuccess = isSuccess, message = Message, LMSEmployeeId = LMSEmployeeId }, JsonRequestBehavior.AllowGet);
+            else
+            {
+                returnResult.Message = "Excel File not selected";
+            }
+
+            //   return Json(new { isSuccess = isSuccess, message = Message, LMSEmployeeId = LMSEmployeeId }, JsonRequestBehavior.AllowGet);
+            return RedirectToAction("ImportEmployeeList", new { Message = returnResult.Message });
 
     }
-        #region save
 
-        //try
-        //{
-        //    if (model != null)
-        //    {
-        //        if (model.LMSEmployeeId > 0)
-        //        {
-        //            LMSEmployeeId = model.LMSEmployeeId;
-        //            var empCount = unitofwork.LMSEmployeeRepository.Get(x => x.LMSEmployeeId != model.LMSEmployeeId && x.EmployeeNo == model.EmployeeNo).Count();
-        //            if (empCount == 0)
-        //            {
-        //                // Edit Employee Information 
+        private Message_VM ParseEmployeeExcel(string path)
+        {
+            //List<ImportEmployee_VM> result = null;
+            Message_VM result = new Message_VM();
+            result.isSuccess = true;
+            result.Message = "";
+            try
+            {
+                Microsoft.Office.Interop.Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();
+                Microsoft.Office.Interop.Excel.Workbook excelBook = xlApp.Workbooks.Open(path);
+                String[] excelSheets = new String[excelBook.Worksheets.Count];
+                int i = 0;
+                foreach (Microsoft.Office.Interop.Excel.Worksheet wSheet in excelBook.Worksheets)
+                {
+                    excelSheets[i] = wSheet.Name;
+                    i++;
+                }
+                excelBook.Close();
 
-        //                var entity = unitofwork.LMSEmployeeRepository.GetByID(model.LMSEmployeeId);
+                result = ParseExcel(path, excelSheets[0]);
 
-        //                LMSEmployee oldEntity = new LMSEmployee();
-        //                oldEntity.EmployeeNo = entity.EmployeeNo;
-        //                oldEntity.FirstName = entity.FirstName;
-        //                oldEntity.LastName = entity.LastName;
-        //                oldEntity.MiddleName = entity.MiddleName;
-        //                oldEntity.HireDate = entity.HireDate;
-        //                oldEntity.Shift = entity.Shift;
+            }
+            catch (Exception ex)
+            {
+                result.isSuccess = false;
+                result.Message = ex.Message.ToString();
+               // throw ex;                
+            }
+            return result;
+        }
 
-        //                oldEntity.LMSBusinessUnitId = entity.LMSBusinessUnitId;
-        //                var bussniessEntity = unitofwork.LMSBusinessUnitRepository.GetByID(entity.LMSBusinessUnitId);
-        //                var businessModel = unitofwork.LMSBusinessUnitRepository.GetByID(model.LMSBusinessUnitId);
+       //   private List<ImportEmployee_VM> ParseExcel(string path, string sheetName)
+        private Message_VM ParseExcel(string path, string sheetName)
+        {
+            //bool isSuccess = true;
+            Message_VM result = new Message_VM();
+            result.isSuccess = true;
+            result.Message = "";
+            List<ImportEmployee_VM> employeeInfo = new List<ImportEmployee_VM>();
+            try
+            {              
+                OleDbConnection oledbConn = OpenConnection(path);
+                if (oledbConn.State == ConnectionState.Open)
+                {
+                    try
+                    {
+                         employeeInfo = ExtractEmployeeInfo(oledbConn, sheetName);
+                        result = EmployeeInfo(employeeInfo);
+                        // isSuccess = ExtractEmployeeInfo(oledbConn, sheetName);
+                        oledbConn.Close();
+                    }
+                    finally
+                    {
+                        oledbConn.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.isSuccess = false;
+                result.Message = ex.Message.ToString();
+                //throw ex;
+            }
+            // return employeeInfo;
+           return result;
+        }
 
-        //                oldEntity.LMSDepartmentId = entity.LMSDepartmentId;
-        //                var departmentEntity = unitofwork.LMSDepartmentRepository.GetByID(entity.LMSDepartmentId);
-        //                var departmentModel = unitofwork.LMSDepartmentRepository.GetByID(model.LMSDepartmentId);
+         private List<ImportEmployee_VM> ExtractEmployeeInfo(OleDbConnection oledbConn, string sheetName)
+       // private bool ExtractEmployeeInfo(OleDbConnection oledbConn, string sheetName)
+        {
+       //     bool isSuccess = true;
 
-        //                oldEntity.LMSJobTitleId = entity.LMSJobTitleId;
-        //                var jobTitleEntity = unitofwork.LMSJobTitleRepository.GetByID(entity.LMSJobTitleId);
-        //                var jobTitleModel = unitofwork.LMSJobTitleRepository.GetByID(model.LMSJobTitleId);
+            OleDbCommand cmd = new OleDbCommand(); ;
+            OleDbDataAdapter oleda = new OleDbDataAdapter();
+             DataSet employeeInfo = new DataSet();
+            //   DataTable employeeInfo = new DataTable();
+            List<ImportEmployee_VM> dsEmployeeInfoList = new List<ImportEmployee_VM>();
+            try
+            {
+                cmd.Connection = oledbConn;
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "SELECT * FROM [" + sheetName + "$]"; //Excel Sheet Name ( Employee )
+            oleda = new OleDbDataAdapter(cmd);
+            //  oleda.Fill(employeeInfo, "Employee");
+            oleda.Fill(employeeInfo);
+                //  oleda.Fill(employeeInfo,sheetName);
 
-        //                entity.FirstName = model.FirstName;
-        //                entity.LastName = model.LastName;
-        //                entity.MiddleName = model.MiddleName;
-        //                entity.EmployeeNo = model.EmployeeNo;
-        //                entity.HireDate = model.HireDate;
-        //                entity.Shift = model.Shift;
-        //                entity.LMSDepartmentId = model.LMSDepartmentId;
-        //                entity.LMSBusinessUnitId = model.LMSBusinessUnitId;
-        //                entity.LMSJobTitleId = model.LMSJobTitleId;
-        //                entity.StatusCode = model.StatusCode;
-        //                entity.LastModifiedBy = LoggedInUser.UserId;
-        //                entity.LastModifiedOn = DateTime.Now;
+                #region Fill Employee
+               
+                foreach (DataTable table in employeeInfo.Tables)
+                {
+                    foreach (DataRow listEmployeeData in table.Rows)
 
-        //                //changing here
+                    {
+                        // LMSEmployee model = new LMSEmployee();
+                        ImportEmployee_VM model = new ImportEmployee_VM();
+                        model.LMSEmployeeId = 0;
+                        model.EmployeeNo = listEmployeeData[0].ToString();
+                        model.FirstName = listEmployeeData[1].ToString();
+                        model.LastName = listEmployeeData[2].ToString();
+                        model.MiddleName = listEmployeeData[3].ToString();
+                        model.Email = listEmployeeData[4].ToString();
+                        model.HireDate = Convert.ToDateTime(listEmployeeData[5]);                        
+                      //  model.IsInitialOrientationApplied = false;
+                        model.LMSDepartmentId = Convert.ToInt32(listEmployeeData[6]);                       
+                        model.DepartmentCode = Convert.ToString(listEmployeeData[7]);
+                        model.LMSJobTitleId = Convert.ToInt32(listEmployeeData[8]);
+                        model.JobTitleName = Convert.ToString(listEmployeeData[9]);
+                        model.LMSBusinessUnitId = Convert.ToInt32(listEmployeeData[10]);
+                        model.DepartmentName = Convert.ToString(listEmployeeData[11]);                       
+                        model.Status = listEmployeeData[12].ToString();
+                        model.Shift = listEmployeeData[13].ToString();
 
-        //                unitofwork.LMSEmployeeRepository.Update(entity);
-
-        //                unitofwork.Save();
-        //                isSuccess = true;
-
-        //                // Add a record to LMSAudit, of editing Employee information 
-
-        //                LMSAudit lmsAudit = new LMSAudit();
-        //                lmsAudit.TransactionDate = DateTime.Now;
-        //                lmsAudit.UserName = LoggedInUser.UserName;
-        //                lmsAudit.FullName = LoggedInUser.FullName;
-        //                lmsAudit.Section = "Employee";
-        //                lmsAudit.Action = "Edit";
-        //                lmsAudit.Description = String.Format("Edited Employee :{0}, {1} ", oldEntity.EmployeeNo, oldEntity.FullName);
-
-        //                if (oldEntity.FirstName != model.FirstName)
-        //                    lmsAudit.Description += String.Format(" * Edited Employee First Name: {0} to {1}", oldEntity.FirstName, model.FirstName);
-        //                if (oldEntity.LastName != model.LastName)
-        //                    lmsAudit.Description += String.Format(" * Edited Employee Last Name: {0} to {1}", oldEntity.LastName, model.LastName);
-        //                if (oldEntity.MiddleName != model.MiddleName)
-        //                    lmsAudit.Description += String.Format(" * Edited Employee Middle Name: {0} to {1}", oldEntity.MiddleName, model.MiddleName);
-        //                if (oldEntity.EmployeeNo != model.EmployeeNo)
-        //                    lmsAudit.Description += String.Format(" * Edited Employee Number: {0} to {1}", oldEntity.EmployeeNo, model.EmployeeNo);
-        //                if (oldEntity.HireDate != model.HireDate)
-        //                    lmsAudit.Description += String.Format(" * Edited Employee Hire Date: {0} to {1}", oldEntity.HireDate, model.HireDate);
-        //                if (oldEntity.Shift != model.Shift)
-        //                    lmsAudit.Description += String.Format(" * Edited Employee Shift: {0} to {1}", oldEntity.Shift, model.Shift);
-        //                if (oldEntity.LMSDepartmentId != model.LMSDepartmentId)
-        //                    lmsAudit.Description += String.Format(" * Edited Employee Department: {0} to {1}", departmentEntity.DepartmentName, departmentModel.DepartmentName);
-
-        //                // Changed  Business Unit to  Location 11/21/2016
-        //                if (oldEntity.LMSBusinessUnitId != model.LMSBusinessUnitId)
-        //                    // lmsAudit.Description += String.Format(" * Edited Employee Business Unit: {0} to {1}", bussniessEntity.BusinessUnitName, businessModel.BusinessUnitName);
-        //                    lmsAudit.Description += String.Format(" * Edited Employee Location: {0} to {1}", bussniessEntity.BusinessUnitName, businessModel.BusinessUnitName);
-
-        //                if (oldEntity.LMSJobTitleId != model.LMSJobTitleId)
-        //                    lmsAudit.Description += String.Format(" * Edited Employee Job Title: {0} to {1}", jobTitleEntity.JobTitleName, jobTitleModel.JobTitleName);
-
-        //                unitofwork.LMSAuditRepository.Insert(lmsAudit);
-        //                unitofwork.Save();
-        //            }
-        //            else
-        //                message = "Employee with same employee number already exists.";
-        //        }
-        //        else
-        //        {
-        //            LMSDBContext context = new LMSDBContext();
-        //            var empCount = context.LMSEmployees.Count(x => x.EmployeeNo == model.EmployeeNo);
-        //            if (empCount == 0)
-        //            {
-        //                // Add new Employee record in LMSEmployee
-        //                model.CreatedBy = LoggedInUser.UserId;
-        //                model.CreatedOn = DateTime.Now;
-        //                unitofwork.LMSEmployeeRepository.Insert(model);
-        //                unitofwork.Save();
-        //                isSuccess = true;
-
-        //                // Add new record in LMSAudit of Adding new Employee record in LMSEmployee                            
-        //                LMSAudit lmsAudit = new LMSAudit();
-        //                lmsAudit.TransactionDate = DateTime.Now;
-        //                lmsAudit.UserName = LoggedInUser.UserName;
-        //                lmsAudit.FullName = LoggedInUser.FullName;
-        //                lmsAudit.Section = "Employee";
-        //                lmsAudit.Action = "Add";
-        //                lmsAudit.Description = String.Format("Added new Employee: {0} (Employee No:{1}) ", model.FullName, model.EmployeeNo);
-        //                unitofwork.LMSAuditRepository.Insert(lmsAudit);
-        //                unitofwork.Save();
-        //                LMSEmployeeId = model.LMSEmployeeId;
-        //            }
-        //            else
-        //                message = "Employee with same employee number already exists.";
-        //        }
-        //    }
-        //}
-        #endregion
+                        dsEmployeeInfoList.Add(model);
+                     
+                    }
+                }
+            }
 
 
+            #endregion
+
+            #region Fill in Table
+            //var dsEmployeeInfoList = employeeInfo.Tables[0].AsEnumerable().Where(s => s["EmployeeNo"] != DBNull.Value
+            //                                                                && s["FirstName"] != DBNull.Value
+            //                                                                && s["LastName"] != DBNull.Value
+            //                                                                && s["MiddleName"] != DBNull.Value
+            //                                                                && s["Email"] != DBNull.Value
+            //                                                                && s["HireDate"] != DBNull.Value
+            //                                                                && s["LMSDepartmentId"] != DBNull.Value
+            //                                                                && s["DepartmentCode"] != DBNull.Value
+            //                                                                && s["LMSJobTitleId"] != DBNull.Value
+            //                                                                && s["JobTitleName"] != DBNull.Value
+            //                                                                && s["LMSBusinessUnitId"] != DBNull.Value
+            //                                                                && s["DepartmentName"] != DBNull.Value
+            //                                                                && s["Status"] != DBNull.Value
+            //                                                                && s["Shift"] != DBNull.Value).Select(s => new ImportEmployee_VM
+            //                                                                {
+            //                                                                    EmployeeNo = Convert.ToString(s["EmployeeNo"] != DBNull.Value ? s["EmployeeNo"] : ""),
+            //                                                                    FirstName = Convert.ToString(s["FirstName"] != DBNull.Value ? s["FirstName"] : ""),
+            //                                                                    MiddleName = Convert.ToString(s["MiddleName"] != DBNull.Value ? s["MiddleName"] : ""),
+            //                                                                    Email = Convert.ToString(s["Email"] != DBNull.Value ? s["Email"] : ""),
+            //                                                                    HireDate = Convert.ToDateTime(s["HireDate"] != DBNull.Value ? s["HireDate"] : ""),
+            //                                                                    LMSDepartmentId = Convert.ToInt32(s["LMSDepartmentId"] != DBNull.Value ? s["LMSDepartmentId"] : ""),
+            //                                                                    DepartmentCode = Convert.ToString(s["DepartmentCode"] != DBNull.Value ? s["DepartmentCode"] : ""),
+            //                                                                    LMSJobTitleId = Convert.ToInt32(s["LMSJobTitleId"] != DBNull.Value ? s["LMSJobTitleId"] : ""),
+            //                                                                    JobTitleName = Convert.ToString(s["JobTitleName"] != DBNull.Value ? s["JobTitleName"] : ""),
+            //                                                                    LMSBusinessUnitId = Convert.ToInt32(s["LMSBusinessUnitId"] != DBNull.Value ? s["LMSBusinessUnitId"] : ""),
+            //                                                                    DepartmentName = Convert.ToString(s["DepartmentName"] != DBNull.Value ? s["DepartmentName"] : ""),
+            //                                                                    Status = Convert.ToString(s["Status"] != DBNull.Value ? s["Status"] : ""),
+            //                                                                    Shift = Convert.ToString(s["Shift"] != DBNull.Value ? s["Shift"] : "")
+            //                                                                }).ToList();
+            #endregion
+
+            catch (Exception ex)
+            {
+                // isSuccess = false;
+                throw ex;
+            }
+            return dsEmployeeInfoList;
+            //return isSuccess;
+        }
+
+        private OleDbConnection OpenConnection(string path)
+        {
+            // path = "C:\\New Development\\LMS RELEASE\\LMS RELEASE 3\\Import Employees\\ImportEmployeeTest1.xlsx";
+            //path = "C:\\Users\\jaya.rashingkar\\AppData\\Local\\Temp\\Import Employees Test3.xlsx";
+            OleDbConnection oledbConn = null;
+            try
+            {
+                if (Path.GetExtension(path) == ".xls")
+                    oledbConn = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0; Data Source=" + path + "; Extended Properties= \"Excel 8.0;HDR=Yes;IMEX=2\"");
+                else if (Path.GetExtension(path) == ".xlsx")
+                    oledbConn = new OleDbConnection(@"Provider=Microsoft.ACE.OLEDB.12.0; Data Source=" + path + "; Extended Properties='Excel 12.0;HDR=YES;IMEX=1;';");
+
+                oledbConn.Open();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return oledbConn;
+        }
+
+        private Message_VM EmployeeInfo(List<ImportEmployee_VM>  employeeInfo)
+        {
+            Message_VM result = new Message_VM();
+          
+           result.Message = "";
+            string errorMessage = "Employees not saved: ";
+            try
+            {                
+                foreach (var importedEmployee in employeeInfo)
+                {
+                    LMSEmployee employee = new LMSEmployee();
+
+                    var jobTitlecount = unitofwork.LMSJobTitleRepository.Get(x => x.LMSJobTitleId == importedEmployee.LMSJobTitleId && x.JobTitleName.Trim() == importedEmployee.JobTitleName.Trim()).Count();
+                    //     var departmentCount = unitofwork.LMSDepartmentRepository.Get(x => x.LMSDepartmentId != importedEmployee.LMSDepartmentId && x.DepartmentName == importedEmployee.DepartmentName).Count();
+                    var departmentCount = unitofwork.LMSDepartmentRepository.Get(x => x.LMSDepartmentId == importedEmployee.LMSDepartmentId && x.DepartmentName.ToString().Contains(importedEmployee.DepartmentName)).Count();
+                    var bussnessUnitCount = unitofwork.LMSBusinessUnitRepository.Get(x => x.LMSBusinessUnitId == importedEmployee.LMSBusinessUnitId).Count();
+                                        
+                    if (departmentCount > 0)
+                    {
+                        employee.LMSDepartmentId = importedEmployee.LMSDepartmentId;                                           
+                    }
+                    else
+                    {
+                        errorMessage += employee.EmployeeNo;
+                      //  result.Message += employee.EmployeeNo;
+                        result.isSuccess = false;
+                        continue;
+                    }
+
+                    if (jobTitlecount > 0)
+                    {
+                        employee.LMSJobTitleId = importedEmployee.LMSDepartmentId;                        
+                    }
+                    else
+                    {
+                        errorMessage += employee.EmployeeNo;
+                      //  result.Message += employee.EmployeeNo;
+                        result.isSuccess = false;
+                        continue;
+                    }
+
+                    if (bussnessUnitCount > 0)
+                    {
+                        employee.LMSBusinessUnitId = importedEmployee.LMSBusinessUnitId;
+                    }
+                    else
+                    {
+                        errorMessage += employee.EmployeeNo;
+                       // result.Message += employee.EmployeeNo;
+                        result.isSuccess = false;
+                        continue;
+                    }
+
+                    employee.EmployeeNo = importedEmployee.EmployeeNo;
+                    employee.FirstName = importedEmployee.FirstName;
+                    employee.LastName = importedEmployee.LastName;
+                    employee.MiddleName = importedEmployee.MiddleName;
+                    employee.HireDate = importedEmployee.HireDate;
+                    
+                    employee.Email = importedEmployee.Email;
+                    employee.Shift = importedEmployee.Shift;
+                    employee.IsInitialOrientationApplied = false;
+                    employee.Shift = importedEmployee.Shift;
+                    
+                    result = saveEmployeeInfo(employee);
+                    if (errorMessage.Trim() == "Employees not saved: ")                        
+                        errorMessage += result.Message;
+                    else
+                        errorMessage += ", "+result.Message;
+                }
+                result.Message = errorMessage;
+            }
+            catch (Exception ex)
+            {
+                result.isSuccess = false;
+                result.Message = ex.ToString();
+            }
+            
+            return result;
+        }
 
         #endregion
         #region EmployeeCourse
@@ -1137,3 +1309,4 @@ namespace UAC.LMS.Web.Controllers
 
     }
 }
+#endregion

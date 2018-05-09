@@ -1457,5 +1457,168 @@ namespace UAC.LMS.Web.Controllers
             }
             return Json(new { items = overdues, total = total }, JsonRequestBehavior.AllowGet);
         }
+
+        public ActionResult GetTrainingTaken(DataGridoption option)
+        {
+            LMSDBContext context = null;
+            List<LMSOverDuesTrainings_VM> overdues = null;
+            IQueryable<LMSOverDuesTrainings_VM> query = null;
+            //   IQueryable<LMSOverDuesTrainings_VM_Excel> query = null;// new List<LMSOverDuesTrainings_VM_Excel>();
+
+            int total = 0;
+            try
+            {
+                context = new LMSDBContext();
+                //query = (from emp in context.LMSEmployees
+                //         join empcourse in context.LMSEmployeeCourses.Where(x => x.CompletedDate == null) on emp.LMSEmployeeId equals empcourse.LMSEmployeeId
+                //         join course in context.LMSCourses on empcourse.LMSCourseId equals course.LMSCourseId
+                //         select new LMSOverDuesTrainings_VM
+                //         {
+                //             //LMSEmployeeId = emp.LMSEmployeeId,
+                //             EmployeeName = emp.FirstName + ", " + emp.LastName,
+                //             EmployeeNo = emp.EmployeeNo,
+                //             TrainingEvent = course.CourseName,
+                //             Frequency = course.Frequency,
+                //             CourseNo = course.CourseCode,
+                //             Department = emp.LMSDepartment.DepartmentName,
+                //             CompletedDate = empcourse.CompletedDate,
+                //             DueDate = empcourse.DueDate,
+                //         });
+                query = (from emp in context.LMSEmployees.Where(j => j.StatusCode.ToLower() == "active")
+                         join empcourse in context.LMSEmployeeCourses.Where(x => x.CompletedDate != null) on emp.LMSEmployeeId equals empcourse.LMSEmployeeId
+                         join course in context.LMSCourses on empcourse.LMSCourseId equals course.LMSCourseId
+                         select new LMSOverDuesTrainings_VM
+                         {
+                             //LMSEmployeeId = emp.LMSEmployeeId,
+                             EmployeeName = emp.FirstName + ", " + emp.LastName,
+                             EmployeeNo = emp.EmployeeNo,
+                             TrainingEvent = course.CourseName,
+                             Frequency = course.Frequency,
+                             CourseNo = course.CourseCode,
+                             Department = emp.LMSDepartment.DepartmentName,
+                             CompletedDate = empcourse.CompletedDate,
+                             DueDate = empcourse.DueDate,
+                             //  });
+                         }).OrderByDescending(j => j.DueDate);//.Take(50);
+
+                if (!string.IsNullOrEmpty(option.searchBy) && !option.searchBy.Equals(""))
+                {
+                    string[] searchSplit = option.searchBy.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (searchSplit != null && searchSplit.Length > 0)
+                    {
+                        foreach (var item in searchSplit)
+                        {
+                            if (!string.IsNullOrEmpty(item))
+                            {
+                                var itemSplit = item.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                                if (itemSplit != null && itemSplit.Length == 2)
+                                {
+                                    var value = itemSplit[1];
+                                    if (!string.IsNullOrEmpty(value) && value.Trim() != "")
+                                    {
+                                        if (itemSplit[0] == "CourseNo")
+                                        {
+                                            query = from p in query
+                                                    where (
+                                                        p.CourseNo.ToLower().Contains(value.Trim())
+                                                    )
+                                                    select p;
+                                        }
+                                        if (itemSplit[0] == "Department")
+                                        {
+                                            query = from p in query
+                                                    where (
+                                                        p.Department.ToLower().Contains(value.Trim())
+                                                    )
+                                                    select p;
+                                        }
+                                        if (itemSplit[0] == "EmployeeNo")
+                                        {
+                                            query = from p in query
+                                                    where (
+                                                        p.EmployeeNo.ToLower().Contains(value.Trim())
+                                                    )
+                                                    select p;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(option.sortBy))
+                {
+                    if (option.sortBy == "EmployeeNo")
+                    {
+                        if (option.sortDirection == "asc")
+                            overdues = query.OrderBy(x => x.EmployeeNo).Skip(option.pageSize * option.pageIndex).Take(option.pageSize).ToList();
+                        else
+                            overdues = query.OrderByDescending(x => x.EmployeeNo).Skip(option.pageSize * option.pageIndex).Take(option.pageSize).ToList();
+                    }
+                    else if (option.sortBy == "TrainingEvent")
+                    {
+                        if (option.sortDirection == "asc")
+                            overdues = query.OrderBy(x => x.TrainingEvent).Skip(option.pageSize * option.pageIndex).Take(option.pageSize).ToList();
+                        else
+                            overdues = query.OrderByDescending(x => x.TrainingEvent).Skip(option.pageSize * option.pageIndex).Take(option.pageSize).ToList();
+                    }
+                    else if (option.sortBy == "Frequency")
+                    {
+                        if (option.sortDirection == "asc")
+                            overdues = query.OrderBy(x => x.Frequency).Skip(option.pageSize * option.pageIndex).Take(option.pageSize).ToList();
+                        else
+                            overdues = query.OrderByDescending(x => x.Frequency).Skip(option.pageSize * option.pageIndex).Take(option.pageSize).ToList();
+                    }
+                    else if (option.sortBy == "CourseNo")
+                    {
+                        if (option.sortDirection == "asc")
+                            overdues = query.OrderBy(x => x.CourseNo).Skip(option.pageSize * option.pageIndex).Take(option.pageSize).ToList();
+                        else
+                            overdues = query.OrderByDescending(x => x.CourseNo).Skip(option.pageSize * option.pageIndex).Take(option.pageSize).ToList();
+                    }
+                    else if (option.sortBy == "Department")
+                    {
+                        if (option.sortDirection == "asc")
+                            overdues = query.OrderBy(x => x.Department).Skip(option.pageSize * option.pageIndex).Take(option.pageSize).ToList();
+                        else
+                            overdues = query.OrderByDescending(x => x.Department).Skip(option.pageSize * option.pageIndex).Take(option.pageSize).ToList();
+                    }
+                    else if (option.sortBy == "CompletedDate")
+                    {
+                        if (option.sortDirection == "asc")
+                            overdues = query.OrderBy(x => x.CompletedDate).Skip(option.pageSize * option.pageIndex).Take(option.pageSize).ToList();
+                        else
+                            overdues = query.OrderByDescending(x => x.CompletedDate).Skip(option.pageSize * option.pageIndex).Take(option.pageSize).ToList();
+                    }
+                    else if (option.sortBy == "DueDate" || option.sortBy == "DaysRemain")
+                    {
+                        if (option.sortDirection == "asc")
+                            overdues = query.OrderBy(x => x.DueDate).Skip(option.pageSize * option.pageIndex).Take(option.pageSize).ToList();
+                        else
+                            overdues = query.OrderByDescending(x => x.DueDate).Skip(option.pageSize * option.pageIndex).Take(option.pageSize).ToList();
+                    }
+                    else
+                    {
+                        overdues = query.ToList();
+                    }
+                }
+                else
+                {
+                    overdues = query.OrderByDescending(x => x.EmployeeNo).Skip(option.pageSize * option.pageIndex).Take(option.pageSize).ToList();
+                }
+                //else
+                //{
+                //    overdues = query.ToList();
+                //}
+                total = query.Count();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return Json(new { items = overdues, total = total }, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }

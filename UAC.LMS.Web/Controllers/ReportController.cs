@@ -30,12 +30,24 @@ namespace UAC.LMS.Web.Controllers
         {
             return View();
         }
-
+              
         [HttpPost]
         public ActionResult TrainingnotTaken(string data)
         {
             ExportToExcel("TrainingNotTaken");
             return View("TrainingNotTaken");
+        }
+
+        public ActionResult TrainingTaken()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult TrainingTaken(string data)
+        {
+            ExportToExcel("TrainingTaken");
+            return View("TrainingTaken");
         }
 
         public void TrainingnotTaken1()
@@ -56,10 +68,20 @@ namespace UAC.LMS.Web.Controllers
             {
                 var gv = new GridView();
                 string fileName = view + "_" + DateTime.Now.ToString().Replace(" ", "").Replace("-", "").Replace(":", "");
-                if (view == "TrainingOverDues")
-                    gv.DataSource = this.GetTrainingOverDues();
-                else
-                    gv.DataSource = this.GetTrainingNotTaken();
+
+                switch (view)
+                {
+                    case "TrainingOverDues":
+                        gv.DataSource = this.GetTrainingOverDues();
+                        break;
+                    case "TrainingNotTaken":
+                        gv.DataSource = this.GetTrainingNotTaken();
+                        break;
+                    case "TrainingTaken":
+                        gv.DataSource = this.GetTrainingTaken();
+                        break;
+                    default: break;
+                }           
                 gv.DataBind();
                 Response.Clear();
                 //Response.ClearContent();
@@ -78,7 +100,7 @@ namespace UAC.LMS.Web.Controllers
             }
             catch (Exception ex)
             {
-                //   throw ex;
+                   throw ex;
             }
         }
         //public void ExportToExcel(string view)
@@ -223,9 +245,51 @@ namespace UAC.LMS.Web.Controllers
             return excel;
         }
 
-        public ActionResult EmployeeCoursesTaken()
+        private List<LMSOverDuesTrainings_VM_Excel> GetTrainingTaken()
         {
-            return View();
+            LMSDBContext context = null;
+            List<LMSOverDuesTrainings_VM> overdues = null;
+            List<LMSOverDuesTrainings_VM_Excel> excel = new List<LMSOverDuesTrainings_VM_Excel>();
+            context = new LMSDBContext();
+            //overdues = (from emp in context.LMSEmployees
+            //            join empcourse in context.LMSEmployeeCourses.Where(x => x.CompletedDate == null) on emp.LMSEmployeeId equals empcourse.LMSEmployeeId
+            //            join course in context.LMSCourses on empcourse.LMSCourseId equals course.LMSCourseId
+            overdues = (from emp in context.LMSEmployees.Where(j => j.StatusCode.ToLower() == "active")
+                        join empcourse in context.LMSEmployeeCourses.Where(x => x.CompletedDate == null) on emp.LMSEmployeeId equals empcourse.LMSEmployeeId
+                        join course in context.LMSCourses on empcourse.LMSCourseId equals course.LMSCourseId
+                        select new LMSOverDuesTrainings_VM
+                        {
+                            //LMSEmployeeId = emp.LMSEmployeeId,
+                            EmployeeName = emp.FirstName + ", " + emp.LastName,
+                            EmployeeNo = emp.EmployeeNo,
+                            TrainingEvent = course.CourseName,
+                            Frequency = course.Frequency,
+                            CourseNo = course.CourseCode,
+                            Department = emp.LMSDepartment.DepartmentName,
+                            CompletedDate = empcourse.CompletedDate,
+                            DueDate = empcourse.DueDate,
+                        }).ToList();
+            if (overdues != null)
+            {
+                overdues.ForEach(x => excel.Add(new LMSOverDuesTrainings_VM_Excel
+                {
+                    Employee = x.EmployeeName,
+                    EmployeeNo = x.EmployeeNo,
+                    TrainingEvent = x.TrainingEvent,
+                    Frq = x.Frequency,
+                    CourseNo = x.CourseNo,
+                    Department = x.Department,
+                    DateCompleted = x.CompletedDate,
+                    DateDue = x.DueDate,
+                    DaysRemain = x.DaysRemain
+                }));
+            }
+            return excel;
         }
+
+        //public ActionResult EmployeeCoursesTaken()
+        //{
+        //    return View();
+        //}
     }
 }

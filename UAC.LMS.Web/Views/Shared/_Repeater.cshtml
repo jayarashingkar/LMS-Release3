@@ -61,7 +61,9 @@
 @helper HeaderDiv(string id)
 {
     @* added here 11/15/2016 *@
-if (@id == "employeeRepeater" || id == "employeeCoursesRepeater" || id == "userLoginsRepeater" || id == "courseRepeater" || id == "rosterRepeater" || id == "AuditRepeater" || id == "HistoryRepeater" || id == "trainingnotTakenReportRepeater" || id == "overduesReportRepeater")
+if (@id == "employeeRepeater" || id == "employeeCoursesRepeater" || id == "userLoginsRepeater" || id == "courseRepeater" ||
+    id == "rosterRepeater" || id == "AuditRepeater" || id == "HistoryRepeater" 
+    || id == "trainingnotTakenReportRepeater" || id == "overduesReportRepeater" || id == "trainingTakenReportRepeater")
 {
     <script>
         var search = document.getElementById('searchDiv');

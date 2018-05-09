@@ -92,6 +92,10 @@ namespace UAC.LMS.Web.App_Start
                 "~/Scripts/trainingnottakenreport.js"
                 ));
 
+            bundles.Add(new ScriptBundle("~/bundles/TrainingTakenReport").Include(
+              "~/Scripts/trainingtakenreport.js"
+              ));
+
             bundles.Add(new ScriptBundle("~/bundles/ImportEmployees").Include(
                "~/Scripts/ImportEmployees.js"
                ));

@@ -2,7 +2,7 @@
 var columns = [
     //{
     //    label: 'ID',
-    //    property: 'EmployeeNo',
+    //    property: 'LMSEmployeeId',
     //    sortable: true
     //},
     {
@@ -11,8 +11,7 @@ var columns = [
         sortable: true
     },
     {
-        //label: 'Empl#',
-        label: 'Employee No #',
+        label: 'Employee No',
         property: 'EmployeeNo',
         sortable: true
     },
@@ -86,6 +85,7 @@ function customColumnRenderer(helpers, callback) {
 function customRowRenderer(helpers, callback) {
     // let's get the id and add it to the "tr" DOM element
     var item = helpers.item;
+    //  item.attr('id', 'row' + helpers.rowData.EmployeeNo);
     item.attr('id', 'row' + helpers.rowData.EmployeeNo);
 
     callback();
@@ -98,12 +98,11 @@ function customDataSource(options, callback) {
     debugger;
     var pageIndex = options.pageIndex;
     var pageSize = options.pageSize;
-
-  var search = '';
+    var search = '';
     if ($('#CourseNo').val())
         search += ';' + 'CourseNo:' + $('#CourseNo').val();
-  if ($('#Department').val())
-        search += ';' + 'Department:' +$('#Department').val();
+    if ($('#Department').val())
+        search += ';' + 'Department:' + $('#Department').val();
 
     var options = {
         pageIndex: pageIndex,
@@ -113,10 +112,10 @@ function customDataSource(options, callback) {
         filterBy: options.filter.value || '',
         searchBy: search || ''
     };
-    // call API, posting options 
+    // call API, posting options
     $.ajax({
         type: 'post',
-        url: GetRootDirectory() + '/Grid/GetTrainingOverDues',
+        url: GetRootDirectory() + '/Grid/GettrainingTaken',
         data: options
     })
     .done(function (data) {
@@ -145,7 +144,6 @@ function customDataSource(options, callback) {
         callback(dataSource);
     });
 }
-
 $(document).ready(function () {
     $('#btnExport').on('click', function () {
         document.getElementById('reportForm').submit();
@@ -154,12 +152,12 @@ $(document).ready(function () {
 
 $('#btnSearch').on('click', function () {
     debugger;
-    $('#overduesReportRepeater').repeater('render');
+    $('#trainingTakenReportRepeater').repeater('render');
 });
 
 
 $('#btnClear').on('click', function () {
-        $('#CourseNo').val('');
-   $('#Department').val('');
-   $('#overduesReportRepeater').repeater('render');
+    $('#CourseNo').val('');
+    $('#Department').val('');
+    $('#trainingTakenReportRepeater').repeater('render');
 });
