@@ -59,6 +59,7 @@
     <Compile Include="LMSCourse.cs" />
     <Compile Include="LMSCourseHistory.cs" />
     <Compile Include="LMSDepartment.cs" />
+    <Compile Include="LMSDeptartmentCourse.cs" />
     <Compile Include="LMSEmployee.cs" />
     <Compile Include="LMSEmployeeCourse.cs" />
     <Compile Include="LMSJobTitle.cs" />

@@ -14,14 +14,13 @@ namespace UAC.LMS.DAL
         {
             // Use the code below During first time database creation
             //Comment after Database creation
-            // Database.SetInitializer(new LMSDBInitializer());
-
-
+            Database.SetInitializer(new LMSDBInitializer());
+            
             // Use the code below After first time database creation
             // Comment - During first time database creation
 
-            Database.SetInitializer<LMSDBContext>(null);
-           
+          //  Database.SetInitializer<LMSDBContext>(null);
+           //----------------
             this.Configuration.LazyLoadingEnabled = false;
             this.Configuration.ProxyCreationEnabled = false;
         }
@@ -39,7 +38,7 @@ namespace UAC.LMS.DAL
         //public DbSet<TestModel1> TestModel1 { get; set; }
         public DbSet<LMSJobTitleCourse> LMSJobTitleCourses { get; set; }
         public DbSet<LMSCourseHistory> LMSCourseHistories { get; set; }
-        
+        public DbSet<LMSJobTitleCourse> LMSDepartmentCourses { get; set; }
         public override int SaveChanges()
         {
             try

@@ -277,7 +277,8 @@ namespace UAC.LMS.Web.Controllers
                             unitofwork.Save();
 
                         }
-                       if (LMSJobTitleIds != null)
+                        #region Job Title Course
+                        if (LMSJobTitleIds != null)
                         {                            
                             var oldMapping = unitofwork.LMSJobTitleCourseRepository.Get(x => x.LMSCourseId == model.LMSCourseId &&
                             !LMSJobTitleIds.Contains(x.LMSJobTitleId)).ToList();
@@ -341,7 +342,7 @@ namespace UAC.LMS.Web.Controllers
                                 }
                             }
                             unitofwork.Save();
-                        }
+                        }                       
                         else
                         {
                             // Deleted the old record from repository - after saving the new while editing
@@ -355,6 +356,7 @@ namespace UAC.LMS.Web.Controllers
                             }
                             unitofwork.Save();
                         }
+                        #endregion
                     }
                     else
                     {
@@ -388,9 +390,9 @@ namespace UAC.LMS.Web.Controllers
                             unitofwork.LMSAuditRepository.Insert(lmsAudit);
                             unitofwork.Save();
                         }
+                        #region Add Job Title to new course
                         if (LMSJobTitleIds != null && LMSJobTitleIds.Count > 0)
-                        {
-
+                        {                         
                             // adding new title to a newly added course 
 
                             string description = String.Format("New Course - {0} (Course Code: {1}) is added to Job titles: ", model.CourseName, model.CourseCode);
@@ -439,6 +441,7 @@ namespace UAC.LMS.Web.Controllers
 
                             unitofwork.Save();
                         }
+                        #endregion
                     }
                 }
             }
@@ -455,12 +458,16 @@ namespace UAC.LMS.Web.Controllers
             LMSCourse entity = null;
             LMSDBContext context = null;
             List<int> jobTitleIds = null;
+           // List<int> departmentIds = null;
             try
             {
                 entity = unitofwork.LMSCourseRepository.GetByID(id);
                 context = new LMSDBContext();
                 // list of job titles the course is assigned to
                 jobTitleIds = context.LMSJobTitleCourses.Where(x => x.LMSCourseId == id).Select(x => x.LMSJobTitleId).ToList();
+                //list of Departments the course is assigned to 
+               // departmentIds = context.LMSDepartmentCourses.Where(x => x.LMSCourseId == id).Select(x => x.LMSDepartmentId).ToList();
+
             }
             catch (Exception ex)
             {

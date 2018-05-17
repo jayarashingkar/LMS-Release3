@@ -682,9 +682,10 @@ namespace UAC.LMS.Web.Controllers
                     
                     employee.Email = importedEmployee.Email;
                     employee.Shift = importedEmployee.Shift;
+
                     employee.IsInitialOrientationApplied = false;
-                    employee.Shift = importedEmployee.Shift;
-                    
+                    employee.StatusCode = "Active";
+
                     result = saveEmployeeInfo(employee);
                     if (errorMessage.Trim() == "Employees not saved: ")                        
                         errorMessage += result.Message;
